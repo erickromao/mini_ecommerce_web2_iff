@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 interface Stats {
   totalProducts: number;
@@ -11,38 +12,47 @@ interface Stats {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
     async function fetchStats() {
-      const [productsRes, usersRes] = await Promise.all([
-        fetch("/api/products"),
-        fetch("/api/users"),
+      const [pRes, uRes] = await Promise.all([
+        fetch("/api/products?limit=1000"),
+        isAdmin ? fetch("/api/users?limit=1000") : Promise.resolve(null),
       ]);
-      const products = await productsRes.json();
-      const users = await usersRes.json();
+      const pData = await pRes.json();
+      const uData = uRes ? await uRes.json() : { data: [], total: 0 };
+
+      const products: { active: number }[] = pData.data ?? [];
+      const users: { active: number }[] = uData.data ?? [];
 
       setStats({
-        totalProducts: products.length,
-        activeProducts: products.filter((p: { active: number }) => p.active === 1).length,
-        totalUsers: users.length,
-        activeUsers: users.filter((u: { active: number }) => u.active === 1).length,
+        totalProducts: pData.total ?? 0,
+        activeProducts: products.filter((p) => p.active === 1).length,
+        totalUsers: uData.total ?? 0,
+        activeUsers: users.filter((u) => u.active === 1).length,
       });
     }
-    fetchStats();
-  }, []);
+    if (user !== null) fetchStats();
+  }, [user, isAdmin]);
 
   const cards = [
     { label: "Total de Produtos", value: stats?.totalProducts ?? "—", color: "bg-blue-500", icon: "📦", href: "/products" },
     { label: "Produtos Ativos", value: stats?.activeProducts ?? "—", color: "bg-green-500", icon: "✅", href: "/products" },
-    { label: "Total de Usuários", value: stats?.totalUsers ?? "—", color: "bg-purple-500", icon: "👥", href: "/users" },
-    { label: "Usuários Ativos", value: stats?.activeUsers ?? "—", color: "bg-orange-500", icon: "🔑", href: "/users" },
+    ...(isAdmin ? [
+      { label: "Total de Usuários", value: stats?.totalUsers ?? "—", color: "bg-purple-500", icon: "👥", href: "/users" },
+      { label: "Usuários Ativos", value: stats?.activeUsers ?? "—", color: "bg-orange-500", icon: "🔑", href: "/users" },
+    ] : []),
   ];
 
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+        <h2 className="text-2xl font-bold text-gray-800">
+          Olá, {user?.name ?? "..."}!
+        </h2>
         <p className="text-gray-500 text-sm mt-1">Visão geral do sistema</p>
       </div>
 
@@ -64,23 +74,31 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h3 className="font-semibold text-gray-700 mb-4">Ações Rápidas</h3>
           <div className="space-y-3">
-            <Link href="/products/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
-              <span className="text-blue-500 text-lg">+</span> Cadastrar novo produto
-            </Link>
-            <Link href="/users/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
-              <span className="text-purple-500 text-lg">+</span> Cadastrar novo usuário
+            {isAdmin && (
+              <>
+                <Link href="/products/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
+                  <span className="text-blue-500 text-lg">+</span> Cadastrar novo produto
+                </Link>
+                <Link href="/users/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
+                  <span className="text-purple-500 text-lg">+</span> Cadastrar novo usuário
+                </Link>
+              </>
+            )}
+            <Link href="/products" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
+              <span className="text-green-500 text-lg">→</span> Ver todos os produtos
             </Link>
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="font-semibold text-gray-700 mb-4">Sobre o Sistema</h3>
+          <h3 className="font-semibold text-gray-700 mb-4">Funcionalidades</h3>
           <ul className="text-sm text-gray-500 space-y-2">
-            <li>• CRUD completo de Produtos</li>
-            <li>• CRUD completo de Usuários</li>
-            <li>• Backend com API Routes (Next.js)</li>
-            <li>• Banco de dados SQLite</li>
-            <li>• Deploy na Vercel</li>
+            <li>✅ CRUD completo de Produtos e Usuários</li>
+            <li>✅ Autenticação com login (JWT + cookie)</li>
+            <li>✅ Autorização por perfil (admin / usuário)</li>
+            <li>✅ Busca e filtro em tempo real</li>
+            <li>✅ Paginação server-side</li>
+            <li>✅ Upload de imagem do produto (base64)</li>
           </ul>
         </div>
       </div>

@@ -17,8 +17,9 @@ export function getDb(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
 
+  initSchema(db);
+
   if (isNew) {
-    initSchema(db);
     seedData(db);
   }
 
@@ -35,6 +36,7 @@ function initSchema(db: Database.Database) {
       stock INTEGER NOT NULL DEFAULT 0,
       category TEXT NOT NULL DEFAULT '',
       active INTEGER NOT NULL DEFAULT 1,
+      image TEXT NOT NULL DEFAULT '',
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     );
@@ -50,6 +52,12 @@ function initSchema(db: Database.Database) {
       updated_at TEXT DEFAULT (datetime('now'))
     );
   `);
+
+  // Safe migration: add image column if it doesn't exist yet
+  const cols = (db.pragma("table_info(products)") as { name: string }[]).map((c) => c.name);
+  if (!cols.includes("image")) {
+    db.exec("ALTER TABLE products ADD COLUMN image TEXT NOT NULL DEFAULT ''");
+  }
 }
 
 function seedData(db: Database.Database) {
@@ -70,13 +78,11 @@ function seedData(db: Database.Database) {
     insertProduct.run(...p);
   }
 
+  const hash = "$2b$10$.Ed82tIUCYmED3cI4TGaKO2r5jLyRIPw8UZgZ5m/hJn1LUMEsSsHK"; // "senha123"
   const insertUser = db.prepare(`
     INSERT INTO users (name, email, password, role, active)
     VALUES (?, ?, ?, ?, ?)
   `);
-
-  // passwords are "senha123" hashed — but for seed we store a fixed bcrypt hash
-  const hash = "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi"; // "senha123"
   insertUser.run("Admin", "admin@loja.com", hash, "admin", 1);
   insertUser.run("João Silva", "joao@email.com", hash, "user", 1);
   insertUser.run("Maria Santos", "maria@email.com", hash, "user", 1);

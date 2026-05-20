@@ -6,6 +6,7 @@ export interface Product {
   stock: number;
   category: string;
   active: number; // 1 = true, 0 = false (SQLite)
+  image: string;
   created_at: string;
   updated_at: string;
 }

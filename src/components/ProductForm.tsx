@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/lib/types";
 
@@ -13,6 +13,7 @@ const CATEGORIES = ["Eletrônicos", "Periféricos", "Monitores", "Mobiliário", 
 
 export default function ProductForm({ initial, id }: Props) {
   const router = useRouter();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     name: initial?.name ?? "",
     description: initial?.description ?? "",
@@ -20,7 +21,9 @@ export default function ProductForm({ initial, id }: Props) {
     stock: initial?.stock?.toString() ?? "0",
     category: initial?.category ?? "",
     active: initial?.active != null ? String(initial.active) : "1",
+    image: initial?.image ?? "",
   });
+  const [imagePreview, setImagePreview] = useState<string>(initial?.image ?? "");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -28,6 +31,30 @@ export default function ProductForm({ initial, id }: Props) {
 
   function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  }
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      setError("Imagem muito grande. Máximo: 1MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target?.result as string;
+      setImagePreview(base64);
+      setForm((f) => ({ ...f, image: base64 }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    setImagePreview("");
+    setForm((f) => ({ ...f, image: "" }));
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -42,6 +69,7 @@ export default function ProductForm({ initial, id }: Props) {
       stock: parseInt(form.stock),
       category: form.category,
       active: parseInt(form.active),
+      image: form.image,
     };
 
     const res = await fetch(isEdit ? `/api/products/${id}` : "/api/products", {
@@ -71,6 +99,42 @@ export default function ProductForm({ initial, id }: Props) {
       )}
 
       <div className="grid grid-cols-1 gap-5">
+        {/* Image upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Imagem do Produto</label>
+          <div className="flex items-start gap-4">
+            <div className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden bg-gray-50 flex-shrink-0">
+              {imagePreview ? (
+                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-3xl">📦</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className="cursor-pointer text-sm text-blue-600 hover:text-blue-800 border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors inline-block"
+              >
+                Escolher imagem
+              </label>
+              {imagePreview && (
+                <button type="button" onClick={removeImage} className="text-sm text-red-500 hover:text-red-700 text-left">
+                  Remover imagem
+                </button>
+              )}
+              <p className="text-xs text-gray-400">PNG, JPG, WebP — máx. 1MB</p>
+            </div>
+          </div>
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
           <input
@@ -134,9 +198,7 @@ export default function ProductForm({ initial, id }: Props) {
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
             >
               <option value="">Selecione...</option>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
+              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
