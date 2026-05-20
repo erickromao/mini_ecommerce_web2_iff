@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@/lib/types";
+import { fetchJson } from "@/lib/fetchJson";
 
 interface Props {
   initial?: Partial<User>;
@@ -45,19 +46,19 @@ export default function UserForm({ initial, id }: Props) {
     };
     if (form.password) payload.password = form.password;
 
-    const res = await fetch(isEdit ? `/api/users/${id}` : "/api/users", {
-      method: isEdit ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    setSaving(false);
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Erro ao salvar usuário");
+    try {
+      await fetchJson(isEdit ? `/api/users/${id}` : "/api/users", {
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      setSaving(false);
+      setError(err instanceof Error ? err.message : "Erro ao salvar usuário");
       return;
     }
+
+    setSaving(false);
 
     router.push("/users");
     router.refresh();

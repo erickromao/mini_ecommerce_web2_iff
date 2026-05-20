@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/lib/types";
+import { fetchJson } from "@/lib/fetchJson";
 
 interface Props {
   initial?: Partial<Product>;
@@ -72,19 +73,19 @@ export default function ProductForm({ initial, id }: Props) {
       image: form.image,
     };
 
-    const res = await fetch(isEdit ? `/api/products/${id}` : "/api/products", {
-      method: isEdit ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    setSaving(false);
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Erro ao salvar produto");
+    try {
+      await fetchJson(isEdit ? `/api/products/${id}` : "/api/products", {
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      setSaving(false);
+      setError(err instanceof Error ? err.message : "Erro ao salvar produto");
       return;
     }
+
+    setSaving(false);
 
     router.push("/products");
     router.refresh();

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { User } from "@/lib/types";
 import Pagination from "@/components/Pagination";
+import { fetchJson } from "@/lib/fetchJson";
 
 interface ApiResponse {
   data: User[];
@@ -28,10 +29,14 @@ export default function UsersPage() {
     if (roleFilter) params.set("role", roleFilter);
     if (activeFilter !== "") params.set("active", activeFilter);
 
-    const res = await fetch(`/api/users?${params}`);
-    const data = await res.json();
-    setResult(data);
-    setLoading(false);
+    try {
+      const data = await fetchJson<ApiResponse>(`/api/users?${params}`);
+      setResult(data);
+    } catch {
+      // fetchJson redirects to /login on 401
+    } finally {
+      setLoading(false);
+    }
   }, [page, search, roleFilter, activeFilter]);
 
   useEffect(() => { load(1); setPage(1); }, [search, roleFilter, activeFilter]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -39,8 +44,12 @@ export default function UsersPage() {
 
   async function handleDelete(id: number, name: string) {
     if (!confirm(`Excluir o usuário "${name}"?`)) return;
-    await fetch(`/api/users/${id}`, { method: "DELETE" });
-    load(page);
+    try {
+      await fetchJson(`/api/users/${id}`, { method: "DELETE" });
+      load(page);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erro ao excluir");
+    }
   }
 
   return (

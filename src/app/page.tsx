@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { fetchJson } from "@/lib/fetchJson";
 
 interface Stats {
   totalProducts: number;
@@ -18,22 +19,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchStats() {
-      const [pRes, uRes] = await Promise.all([
-        fetch("/api/products?limit=1000"),
-        isAdmin ? fetch("/api/users?limit=1000") : Promise.resolve(null),
-      ]);
-      const pData = await pRes.json();
-      const uData = uRes ? await uRes.json() : { data: [], total: 0 };
+      try {
+        type PR = { data: { active: number }[]; total: number };
+        const pData = await fetchJson<PR>("/api/products?limit=1000");
+        const uData = isAdmin
+          ? await fetchJson<PR>("/api/users?limit=1000")
+          : { data: [], total: 0 };
 
-      const products: { active: number }[] = pData.data ?? [];
-      const users: { active: number }[] = uData.data ?? [];
-
-      setStats({
-        totalProducts: pData.total ?? 0,
-        activeProducts: products.filter((p) => p.active === 1).length,
-        totalUsers: uData.total ?? 0,
-        activeUsers: users.filter((u) => u.active === 1).length,
-      });
+        setStats({
+          totalProducts: pData.total,
+          activeProducts: pData.data.filter((p) => p.active === 1).length,
+          totalUsers: uData.total,
+          activeUsers: uData.data.filter((u) => u.active === 1).length,
+        });
+      } catch {
+        // fetchJson redirects to /login on 401
+      }
     }
     if (user !== null) fetchStats();
   }, [user, isAdmin]);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Product } from "@/lib/types";
 import Pagination from "@/components/Pagination";
 import { useAuth } from "@/context/AuthContext";
+import { fetchJson } from "@/lib/fetchJson";
 
 const CATEGORIES = ["", "Eletrônicos", "Periféricos", "Monitores", "Mobiliário", "Acessórios", "Outros"];
 
@@ -34,10 +35,14 @@ export default function ProductsPage() {
     if (category) params.set("category", category);
     if (activeFilter !== "") params.set("active", activeFilter);
 
-    const res = await fetch(`/api/products?${params}`);
-    const data = await res.json();
-    setResult(data);
-    setLoading(false);
+    try {
+      const data = await fetchJson<ApiResponse>(`/api/products?${params}`);
+      setResult(data);
+    } catch {
+      // fetchJson redirects to /login on 401
+    } finally {
+      setLoading(false);
+    }
   }, [page, search, category, activeFilter]);
 
   useEffect(() => { load(1); setPage(1); }, [search, category, activeFilter]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -45,8 +50,12 @@ export default function ProductsPage() {
 
   async function handleDelete(id: number, name: string) {
     if (!confirm(`Excluir o produto "${name}"?`)) return;
-    await fetch(`/api/products/${id}`, { method: "DELETE" });
-    load(page);
+    try {
+      await fetchJson(`/api/products/${id}`, { method: "DELETE" });
+      load(page);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erro ao excluir");
+    }
   }
 
   return (
