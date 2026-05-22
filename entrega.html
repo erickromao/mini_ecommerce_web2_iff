@@ -3,643 +3,1201 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrega — Mini E-commerce Web 2</title>
+  <title>Documento de Entrega – Mini E-commerce | Web II – IFF</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:      #0a0a0a;
+      --metal-900:  #111318;
+      --metal-800:  #1c2028;
+      --metal-700:  #252b36;
+      --metal-600:  #323946;
+      --metal-500:  #4a5265;
+      --metal-400:  #6b7589;
+      --metal-300:  #9aa3b2;
+      --metal-200:  #c8cdd6;
+      --metal-100:  #e8eaed;
+      --metal-50:   #f4f5f7;
+      --white:      #ffffff;
+      --accent:     #c8cdd6;   /* metallic silver for accents */
+      --rule:       #d0d4db;
+      --radius:     8px;
+      --shadow-sm:  0 1px 3px rgba(0,0,0,.10);
+      --shadow:     0 2px 8px rgba(0,0,0,.08);
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      font-size: 13px;
-      color: #1e293b;
-      background: #fff;
-      line-height: 1.6;
+      font-family: 'Times New Roman', Times, Georgia, serif;
+      background: var(--white);
+      color: var(--metal-800);
+      line-height: 1.7;
+      font-size: 14.5px;
     }
 
-    .page {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 48px 56px;
-    }
+    /* ── Page wrapper ── */
+    .page { max-width: 860px; margin: 0 auto; padding: 60px 48px 80px; }
 
-    /* ── CAPA ── */
-    .cover {
+    /* ── Institutional header ── */
+    .inst-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      padding: 60px 0 48px;
-      border-bottom: 2px solid #e2e8f0;
+      border-bottom: 2px solid var(--metal-800);
+      padding-bottom: 28px;
       margin-bottom: 40px;
     }
-
-    .cover .badge {
-      display: inline-block;
-      background: #4F46E5;
-      color: #fff;
+    .inst-logo {
+      width: 52px; height: 52px;
+      border: 2px solid var(--metal-800);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+      background: var(--metal-900);
+      color: var(--white);
+    }
+    .inst-title {
       font-size: 11px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 2.5px;
       text-transform: uppercase;
-      padding: 4px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
+      color: var(--metal-500);
+      margin-bottom: 4px;
+    }
+    .inst-sub {
+      font-size: 11px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--metal-400);
     }
 
-    .cover h1 {
-      font-size: 26px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 6px;
+    /* ── Document title block ── */
+    .doc-title-block {
+      text-align: center;
+      margin-bottom: 52px;
     }
-
-    .cover h2 {
-      font-size: 15px;
-      font-weight: 500;
-      color: #64748b;
-      margin-bottom: 32px;
-    }
-
-    .cover .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      max-width: 480px;
-      margin: 0 auto;
-      text-align: left;
-    }
-
-    .cover .info-item {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 12px 16px;
-    }
-
-    .cover .info-item .label {
+    .doc-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 10px;
       font-weight: 700;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      margin-bottom: 2px;
+      color: var(--metal-400);
+      margin-bottom: 12px;
     }
-
-    .cover .info-item .value {
-      font-size: 13px;
-      font-weight: 600;
-      color: #1e293b;
+    .doc-title {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      color: var(--metal-900);
+      line-height: 1.25;
+      margin-bottom: 8px;
     }
-
-    /* ── SEÇÕES ── */
-    .section {
-      margin-bottom: 36px;
+    .doc-subtitle {
+      font-size: 1rem;
+      color: var(--metal-500);
+      font-style: italic;
+      margin-bottom: 28px;
     }
-
-    .section-title {
-      font-size: 11px;
-      font-weight: 800;
+    .doc-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .doc-divider-line { width: 80px; height: 1px; background: var(--metal-300); }
+    .doc-divider-diamond {
+      width: 6px; height: 6px;
+      background: var(--metal-800);
+      transform: rotate(45deg);
+    }
+    .doc-meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .doc-meta-item { text-align: center; }
+    .doc-meta-label {
+      font-size: 9px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      color: #4F46E5;
-      border-bottom: 2px solid #e0e7ff;
-      padding-bottom: 6px;
+      color: var(--metal-400);
+      margin-bottom: 3px;
+    }
+    .doc-meta-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--metal-800);
+    }
+
+    /* ── TOC ── */
+    .toc-wrapper {
+      border: 1px solid var(--metal-200);
+      border-top: 3px solid var(--metal-900);
+      background: var(--metal-50);
+      padding: 24px 32px;
+      margin-bottom: 48px;
+    }
+    .toc-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--metal-500);
+      margin-bottom: 16px;
+    }
+    .toc-list { list-style: none; }
+    .toc-list li {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      padding: 5px 0;
+      border-bottom: 1px dotted var(--metal-200);
+    }
+    .toc-list li:last-child { border-bottom: none; }
+    .toc-num {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--metal-500);
+      width: 28px;
+      flex-shrink: 0;
+    }
+    .toc-list a {
+      font-size: 13.5px;
+      color: var(--metal-700);
+      text-decoration: none;
+      flex: 1;
+    }
+    .toc-list a:hover { color: var(--metal-900); text-decoration: underline; }
+    .toc-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--metal-300);
+      margin: 0 8px 4px;
+    }
+    .toc-page {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      color: var(--metal-400);
+    }
+
+    /* ── Section ── */
+    .section { margin-bottom: 52px; }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--metal-900);
+    }
+    .section-num-badge {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--white);
+      background: var(--metal-900);
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: var(--metal-900);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      text-transform: uppercase;
+    }
+
+    /* ── Identification table ── */
+    .id-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13.5px;
+    }
+    .id-table tr { border-bottom: 1px solid var(--metal-100); }
+    .id-table tr:first-child { border-top: 1px solid var(--metal-200); }
+    .id-table th {
+      background: var(--metal-50);
+      color: var(--metal-500);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 12px 18px;
+      width: 200px;
+      border-right: 1px solid var(--metal-200);
+    }
+    .id-table td {
+      padding: 12px 18px;
+      color: var(--metal-800);
+      font-weight: 500;
+    }
+
+    /* ── Body text ── */
+    p.body-text {
+      font-size: 14px;
+      color: var(--metal-600);
+      line-height: 1.75;
       margin-bottom: 16px;
     }
 
-    /* ── TECNOLOGIAS ── */
-    .tech-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .tech-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 12px 16px;
-    }
-
-    .tech-card .tech-layer {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      margin-bottom: 4px;
-    }
-
-    .tech-card .tech-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #1e293b;
-    }
-
-    .tech-card .tech-detail {
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 1px;
-    }
-
-    /* ── FUNCIONALIDADES ── */
-    .feat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .feat-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #f8fafc;
-      border-radius: 6px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .feat-item .check {
-      color: #10b981;
-      font-size: 14px;
-      line-height: 1.4;
-      flex-shrink: 0;
-    }
-
-    .feat-item .bonus-check {
-      color: #f59e0b;
-    }
-
-    .feat-item span {
-      font-size: 12px;
-      color: #374151;
-    }
-
-    .bonus-label {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 700;
-      background: #fef3c7;
-      color: #92400e;
-      border: 1px solid #fde68a;
-      border-radius: 4px;
-      padding: 1px 5px;
-      margin-left: 4px;
-      vertical-align: middle;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* ── COMMITS ── */
-    .commit-list {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .commit-item {
-      display: grid;
-      grid-template-columns: 72px 90px 1fr;
-      gap: 0;
-      border-bottom: 1px solid #f1f5f9;
-      align-items: center;
-    }
-
-    .commit-item:last-child { border-bottom: none; }
-
-    .commit-item:nth-child(even) { background: #f8fafc; }
-
-    .commit-hash {
-      font-family: 'Courier New', monospace;
-      font-size: 10px;
-      color: #4F46E5;
-      padding: 8px 10px;
-      font-weight: 700;
-    }
-
-    .commit-date {
-      font-size: 10px;
-      color: #94a3b8;
-      padding: 8px 10px;
-    }
-
-    .commit-msg {
-      font-size: 11px;
-      color: #374151;
-      padding: 8px 10px 8px 0;
-    }
-
-    .commit-tag {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 3px;
-      margin-right: 4px;
-      text-transform: uppercase;
-    }
-
-    .tag-feat    { background: #d1fae5; color: #065f46; }
-    .tag-backend { background: #dbeafe; color: #1e40af; }
-    .tag-frontend{ background: #ede9fe; color: #4c1d95; }
-    .tag-bonus   { background: #fef3c7; color: #92400e; }
-    .tag-fix     { background: #fee2e2; color: #991b1b; }
-    .tag-setup   { background: #f1f5f9; color: #475569; }
-    .tag-docs    { background: #e0f2fe; color: #0c4a6e; }
-    .tag-chore   { background: #f1f5f9; color: #475569; }
-    .tag-infra   { background: #e0f2fe; color: #075985; }
-
-    /* ── LINKS ── */
-    .links-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .link-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 14px 16px;
-    }
-
-    .link-card .link-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #94a3b8;
-      margin-bottom: 4px;
-    }
-
-    .link-card a {
-      font-size: 12px;
-      color: #4F46E5;
-      word-break: break-all;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    /* ── CRITÉRIOS ── */
-    .criteria-table {
+    /* ── Tech table ── */
+    .tech-table {
       width: 100%;
       border-collapse: collapse;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      margin-bottom: 4px;
     }
-
-    .criteria-table thead tr {
-      background: #4F46E5;
-      color: #fff;
-    }
-
-    .criteria-table th {
-      padding: 9px 14px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .criteria-table th:last-child { text-align: center; }
-
-    .criteria-table td {
-      padding: 9px 14px;
-      font-size: 12px;
-      border-bottom: 1px solid #f1f5f9;
-    }
-
-    .criteria-table tr:last-child td { border-bottom: none; }
-    .criteria-table tr:nth-child(even) td { background: #f8fafc; }
-
-    .criteria-table td:last-child { text-align: center; }
-
-    .status-ok {
-      display: inline-block;
-      background: #d1fae5;
-      color: #065f46;
+    .tech-table thead th {
+      background: var(--metal-900);
+      color: var(--white);
       font-size: 10px;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      text-align: left;
+    }
+    .tech-table tbody tr { border-bottom: 1px solid var(--metal-100); }
+    .tech-table tbody tr:last-child { border-bottom: none; }
+    .tech-table tbody tr:hover td { background: var(--metal-50); }
+    .tech-table td { padding: 11px 16px; color: var(--metal-700); vertical-align: top; }
+    .tech-table td:first-child {
+      font-weight: 700;
+      color: var(--metal-900);
+      white-space: nowrap;
+      width: 140px;
+      border-right: 1px solid var(--metal-100);
     }
 
-    .pts {
+    /* ── Feature list ── */
+    .feature-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .feature-col-title {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 9px;
       font-weight: 700;
-      color: #4F46E5;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--metal-400);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--metal-200);
+      margin-bottom: 12px;
     }
-
-    .total-row td {
-      background: #eef2ff !important;
-      font-weight: 700;
-      color: #312e81;
+    .feat-list { list-style: none; }
+    .feat-list li {
+      display: flex;
+      gap: 10px;
+      padding: 5px 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 13px;
+      color: var(--metal-700);
+      border-bottom: 1px dotted var(--metal-100);
+    }
+    .feat-list li:last-child { border-bottom: none; }
+    .feat-list li::before {
+      content: '▪';
+      color: var(--metal-400);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .feat-list strong { font-weight: 700; color: var(--metal-900); }
+
+    /* ── Architecture ── */
+    .arch-pre {
+      background: var(--metal-900);
+      color: #d1d5db;
+      border: 1px solid var(--metal-700);
+      padding: 28px 32px;
+      font-family: 'SFMono-Regular', 'Courier New', Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.85;
+      overflow-x: auto;
+      border-radius: 4px;
+      white-space: pre;
+    }
+    .arch-comment { color: #4b5563; }
+    .arch-dir     { color: #9ca3af; font-weight: 700; }
+    .arch-file    { color: #d1d5db; }
+    .arch-note    { color: #6b7280; font-style: italic; }
+    .arch-green   { color: #6ee7b7; }
+    .arch-blue    { color: #93c5fd; }
+    .arch-yellow  { color: #fcd34d; }
+
+    /* ── API Table ── */
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12.5px;
+    }
+    .api-table thead th {
+      background: var(--metal-900);
+      color: var(--white);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      text-align: left;
+    }
+    .api-table tbody tr { border-bottom: 1px solid var(--metal-100); }
+    .api-table tbody tr:last-child { border-bottom: none; }
+    .api-table tbody tr:nth-child(even) td { background: var(--metal-50); }
+    .api-table tbody tr:hover td { background: var(--metal-100); }
+    .api-table td { padding: 9px 14px; color: var(--metal-700); }
+
+    .badge {
+      display: inline-block;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 3px;
+      padding: 2px 7px;
+      letter-spacing: .5px;
+    }
+    .badge.get    { background: #e5e7eb; color: #1f2937; border: 1px solid #d1d5db; }
+    .badge.post   { background: #1f2937; color: #f9fafb; }
+    .badge.put    { background: #6b7280; color: #f9fafb; }
+    .badge.delete { background: #374151; color: #f3f4f6; border: 1px solid #6b7280; }
+
+    code.mono {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 11.5px;
+      background: var(--metal-100);
+      border: 1px solid var(--metal-200);
+      border-radius: 3px;
+      padding: 1px 6px;
+      color: var(--metal-800);
     }
 
-    /* ── PRINT ── */
+    /* ── Commits ── */
+    .commit-note {
+      background: var(--metal-50);
+      border-left: 3px solid var(--metal-900);
+      padding: 12px 18px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--metal-600);
+      margin-bottom: 24px;
+    }
+    .commit-note strong { color: var(--metal-900); }
+
+    .commit-group { margin-bottom: 24px; }
+    .commit-group-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--metal-400);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--metal-200);
+      margin-bottom: 8px;
+    }
+    .commit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--metal-50);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12.5px;
+    }
+    .commit-row:last-child { border-bottom: 1px solid var(--metal-200); }
+    .commit-row:hover { background: var(--metal-50); }
+    .c-type {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      min-width: 52px;
+      text-align: center;
+      border: 1px solid currentColor;
+    }
+    .c-type.setup    { color: #6b7280; }
+    .c-type.backend  { color: #374151; background: #f3f4f6; }
+    .c-type.frontend { color: #1f2937; background: #e5e7eb; }
+    .c-type.bonus    { color: #1f2937; background: #d1d5db; }
+    .c-type.feat     { color: #111827; background: #9ca3af; }
+    .c-type.fix      { color: #374151; }
+    .c-type.docs     { color: #6b7280; }
+    .c-type.chore    { color: #9ca3af; }
+
+    .c-hash {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 10.5px;
+      color: var(--metal-400);
+      flex-shrink: 0;
+      min-width: 58px;
+    }
+    .c-msg { flex: 1; color: var(--metal-700); }
+    .c-date { font-size: 11px; color: var(--metal-400); flex-shrink: 0; white-space: nowrap; }
+
+    /* ── Evidence images ── */
+    .evidence-note {
+      background: var(--metal-50);
+      border: 1px solid var(--metal-200);
+      border-left: 3px solid var(--metal-600);
+      padding: 14px 18px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--metal-600);
+      margin-bottom: 24px;
+    }
+    .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .img-figure {
+      border: 1px solid var(--metal-200);
+      background: var(--metal-50);
+    }
+    .img-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-bottom: 1px solid var(--metal-200);
+    }
+    .img-placeholder {
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--metal-300);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px;
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid var(--metal-200);
+    }
+    .img-placeholder .picon { font-size: 28px; margin-bottom: 8px; opacity: .5; }
+    .img-placeholder code { font-size: 11px; color: var(--metal-400); }
+    figcaption {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px;
+      color: var(--metal-500);
+      text-align: center;
+      padding: 8px 12px;
+      font-style: italic;
+    }
+
+    /* ── Links ── */
+    .link-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    .link-table thead th {
+      background: var(--metal-900);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      text-align: left;
+    }
+    .link-table tbody tr { border-bottom: 1px solid var(--metal-100); }
+    .link-table td { padding: 12px 16px; color: var(--metal-700); vertical-align: middle; }
+    .link-table td:first-child {
+      font-weight: 700;
+      color: var(--metal-900);
+      width: 160px;
+      border-right: 1px solid var(--metal-100);
+    }
+    .link-table a { color: var(--metal-800); text-decoration: underline; word-break: break-all; }
+    .link-table a:hover { color: var(--metal-900); }
+
+    .credentials-box {
+      background: var(--metal-50);
+      border: 1px solid var(--metal-200);
+      padding: 18px 22px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      color: var(--metal-600);
+    }
+    .credentials-box strong { color: var(--metal-900); display: block; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .credential-row { margin-bottom: 6px; }
+
+    /* ── Footer / signature ── */
+    .doc-footer {
+      margin-top: 60px;
+      border-top: 2px solid var(--metal-900);
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .sign-block { text-align: center; }
+    .sign-line { width: 220px; height: 1px; background: var(--metal-800); margin-bottom: 6px; }
+    .sign-name { font-size: 12px; font-weight: 700; color: var(--metal-900); }
+    .sign-role { font-size: 11px; color: var(--metal-500); }
+    .footer-right { text-align: right; font-size: 11.5px; color: var(--metal-500); line-height: 1.8; }
+
+    /* ── Print ── */
     @media print {
-      body { font-size: 12px; }
-      .page { padding: 32px 40px; }
-      a { color: #4F46E5 !important; }
+      body { font-size: 13px; }
+      .page { padding: 20px 32px; }
+      .section { break-inside: avoid; }
+      .arch-pre, .commit-row, .feat-list li { break-inside: avoid; }
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 32px 20px; }
+      .feature-cols, .img-grid { grid-template-columns: 1fr; }
+      .doc-meta-row { flex-direction: column; gap: 16px; }
+      .doc-footer { flex-direction: column; gap: 32px; }
     }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- CAPA -->
-  <div class="cover">
-    <div class="badge">Web 2 — IFF Itaperuna</div>
-    <h1>Mini E-commerce — Romão Store</h1>
-    <h2>Painel Administrativo Full Stack com Next.js e Neon Postgres</h2>
+  <!-- ══════════ CABEÇALHO INSTITUCIONAL ══════════ -->
+  <div class="inst-header">
+    <div class="inst-logo">🎓</div>
+    <div class="inst-title">Instituto Federal Fluminense — IFF Itaperuna</div>
+    <div class="inst-sub">Sistemas de Informação — 5º Período &nbsp;·&nbsp; Disciplina: Desenvolvimento Web II</div>
+  </div>
 
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Aluno</div>
-        <div class="value">Erick Romão</div>
+  <!-- ══════════ TÍTULO DO DOCUMENTO ══════════ -->
+  <div class="doc-title-block">
+    <div class="doc-label">Documento de Entrega</div>
+    <h1 class="doc-title">Mini E-commerce — Romão Store</h1>
+    <p class="doc-subtitle">Painel administrativo full-stack com CRUD de produtos e usuários</p>
+    <div class="doc-divider">
+      <div class="doc-divider-line"></div>
+      <div class="doc-divider-diamond"></div>
+      <div class="doc-divider-line"></div>
+    </div>
+    <div class="doc-meta-row">
+      <div class="doc-meta-item">
+        <div class="doc-meta-label">Aluno</div>
+        <div class="doc-meta-value">Erick Romão</div>
       </div>
-      <div class="info-item">
-        <div class="label">Turma</div>
-        <div class="value">5º Período — Sistemas de Informação</div>
+      <div class="doc-meta-item">
+        <div class="doc-meta-label">Turma</div>
+        <div class="doc-meta-value">Sistemas de Informação — 5º Período</div>
       </div>
-      <div class="info-item">
-        <div class="label">Instituição</div>
-        <div class="value">IFF — Itaperuna</div>
-      </div>
-      <div class="info-item">
-        <div class="label">Data</div>
-        <div class="value">22/05/2026</div>
+      <div class="doc-meta-item">
+        <div class="doc-meta-label">Data</div>
+        <div class="doc-meta-value">22 de maio de 2026</div>
       </div>
     </div>
   </div>
 
-  <!-- TECNOLOGIAS -->
-  <div class="section">
-    <div class="section-title">Tecnologias Utilizadas</div>
-    <div class="tech-grid">
-      <div class="tech-card">
-        <div class="tech-layer">Frontend</div>
-        <div class="tech-name">Next.js 16 + React 19</div>
-        <div class="tech-detail">App Router · Tailwind CSS v4 · TypeScript</div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-layer">Backend</div>
-        <div class="tech-name">Next.js API Routes</div>
-        <div class="tech-detail">Node.js · REST · bcryptjs · jose (JWT)</div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-layer">Banco de Dados</div>
-        <div class="tech-name">Neon Postgres</div>
-        <div class="tech-detail">@neondatabase/serverless · serverless · schema e seed automáticos</div>
-      </div>
-      <div class="tech-card">
-        <div class="tech-layer">Deploy</div>
-        <div class="tech-name">Vercel + Neon</div>
-        <div class="tech-detail">CI/CD automático via GitHub · banco integrado ao painel Vercel</div>
-      </div>
-    </div>
+  <!-- ══════════ SUMÁRIO ══════════ -->
+  <div class="toc-wrapper">
+    <div class="toc-title">Sumário</div>
+    <ol class="toc-list">
+      <li>
+        <span class="toc-num">I.</span>
+        <a href="#identificacao">Identificação</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">II.</span>
+        <a href="#tecnologias">Tecnologias Utilizadas</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">III.</span>
+        <a href="#funcionalidades">Funcionalidades Implementadas</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">IV.</span>
+        <a href="#arquitetura">Arquitetura e Rotas da API</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">V.</span>
+        <a href="#commits">Histórico de Commits</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">VI.</span>
+        <a href="#evidencias">Evidências (Capturas de Tela)</a>
+        <span class="toc-dots"></span>
+      </li>
+      <li>
+        <span class="toc-num">VII.</span>
+        <a href="#links">Links do Repositório e Deploy</a>
+        <span class="toc-dots"></span>
+      </li>
+    </ol>
   </div>
 
-  <!-- FUNCIONALIDADES -->
-  <div class="section">
-    <div class="section-title">Funcionalidades Implementadas</div>
-    <div class="feat-grid">
-      <div class="feat-item">
-        <span class="check">✔</span>
-        <span>CRUD completo de Produtos</span>
-      </div>
-      <div class="feat-item">
-        <span class="check">✔</span>
-        <span>CRUD completo de Usuários</span>
-      </div>
-      <div class="feat-item">
-        <span class="check">✔</span>
-        <span>Integração frontend + backend (API REST)</span>
-      </div>
-      <div class="feat-item">
-        <span class="check">✔</span>
-        <span>Persistência em banco Neon Postgres (serverless)</span>
-      </div>
-      <div class="feat-item">
-        <span class="check bonus-check">★</span>
-        <span>Autenticação com login <span class="bonus-label">bônus</span></span>
-      </div>
-      <div class="feat-item">
-        <span class="check bonus-check">★</span>
-        <span>Autorização por perfil admin/user <span class="bonus-label">bônus</span></span>
-      </div>
-      <div class="feat-item">
-        <span class="check bonus-check">★</span>
-        <span>Busca e filtro server-side <span class="bonus-label">bônus</span></span>
-      </div>
-      <div class="feat-item">
-        <span class="check bonus-check">★</span>
-        <span>Paginação server-side <span class="bonus-label">bônus</span></span>
-      </div>
-      <div class="feat-item">
-        <span class="check bonus-check">★</span>
-        <span>Upload de imagem do produto (base64) <span class="bonus-label">bônus</span></span>
-      </div>
-      <div class="feat-item">
-        <span class="check">✔</span>
-        <span>Sessão via JWT em cookie httpOnly (7 dias)</span>
-      </div>
+
+  <!-- ══════════ I. IDENTIFICAÇÃO ══════════ -->
+  <div class="section" id="identificacao">
+    <div class="section-heading">
+      <span class="section-num-badge">I</span>
+      <h2 class="section-title">Identificação</h2>
     </div>
+
+    <table class="id-table">
+      <tr>
+        <th>Nome do Aluno</th>
+        <td>Erick Romão</td>
+      </tr>
+      <tr>
+        <th>Instituição</th>
+        <td>Instituto Federal Fluminense — IFF Itaperuna</td>
+      </tr>
+      <tr>
+        <th>Turma / Disciplina</th>
+        <td>Sistemas de Informação — 5º Período — Desenvolvimento Web II</td>
+      </tr>
+      <tr>
+        <th>Projeto</th>
+        <td>Mini E-commerce — Romão Store (Painel Administrativo)</td>
+      </tr>
+      <tr>
+        <th>Data de Entrega</th>
+        <td>22 de maio de 2026</td>
+      </tr>
+    </table>
   </div>
 
-  <!-- LINKS -->
-  <div class="section">
-    <div class="section-title">Links do Projeto</div>
-    <div class="links-grid">
-      <div class="link-card">
-        <div class="link-label">Repositório GitHub</div>
-        <a href="https://github.com/erickromao/mini_ecommerce_web2_iff">
-          github.com/erickromao/mini_ecommerce_web2_iff
-        </a>
-      </div>
-      <div class="link-card">
-        <div class="link-label">Deploy — Vercel</div>
-        <a href="https://mini-ecommerce-web2-iff.vercel.app/">
-          mini-ecommerce-web2-iff.vercel.app
-        </a>
-      </div>
+
+  <!-- ══════════ II. TECNOLOGIAS ══════════ -->
+  <div class="section" id="tecnologias">
+    <div class="section-heading">
+      <span class="section-num-badge">II</span>
+      <h2 class="section-title">Tecnologias Utilizadas</h2>
     </div>
-  </div>
 
-  <!-- COMMITS -->
-  <div class="section">
-    <div class="section-title">Histórico de Commits</div>
-    <div class="commit-list">
+    <p class="body-text">
+      O projeto foi desenvolvido com tecnologias modernas do ecossistema JavaScript/TypeScript,
+      adotando uma arquitetura <em>full-stack</em> unificada por meio do framework Next.js,
+      que centraliza tanto o front-end quanto as rotas de API no mesmo repositório.
+    </p>
 
-      <div class="commit-item">
-        <div class="commit-hash">446b258</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-setup">setup</span>first commit</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">37d43e2</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-setup">setup</span>inicialização do projeto Next.js com TypeScript e Tailwind CSS</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">e1b529c</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>configuração do banco de dados SQLite com schema e seed</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">1e5328a</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>implementação da API REST de Produtos (CRUD)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">7591bc3</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>implementação da API REST de Usuários (CRUD)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">a7022e6</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>layout principal com sidebar e dashboard de estatísticas</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">4771915</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>interface de Produtos (listagem, cadastro e edição)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">37972da</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>interface de Usuários (listagem, cadastro e edição)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">5fa9ed2</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>autenticação com login (JWT + cookie httpOnly)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">5c614d6</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>autorização por perfil (admin/user)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">0616972</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>busca, filtro e paginação server-side</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">38c8c6a</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>upload de imagem do produto (base64)</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">551ca18</div>
-        <div class="commit-date">19/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>rotas de API retornam 401 JSON quando não autenticado</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">34238a3</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>redesign UI/UX com branding Romão Store e páginas de detalhe</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">19ce525</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>botões de ação com texto visível e aviso para não-admins</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">b1bbcbe</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-chore">chore</span>remove ícone de desenvolvimento do Next.js</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">3c4ea68</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-docs">docs</span>README em português com instruções de uso e arquitetura</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">124044c</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>favicon personalizado com sacola de compras em indigo</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">9c89c0c</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>corrige estado de autenticação pós-login</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">ef5cbd6</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>formatação automática de preço no padrão brasileiro</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">b94c38e</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>input de preço em centavos com formatação em tempo real</div>
-      </div>
-      <div class="commit-item">
-        <div class="commit-hash">e4dfa0b</div>
-        <div class="commit-date">22/05/2026</div>
-        <div class="commit-msg"><span class="commit-tag tag-infra">infra</span>migra banco de dados de SQLite para Neon Postgres</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- CRITÉRIOS -->
-  <div class="section">
-    <div class="section-title">Critérios de Avaliação</div>
-    <table class="criteria-table">
+    <table class="tech-table">
       <thead>
         <tr>
-          <th>Critério</th>
-          <th style="text-align:center">Status</th>
-          <th style="text-align:center">Pontos</th>
+          <th>Camada</th>
+          <th>Tecnologia / Biblioteca</th>
+          <th>Finalidade</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>CRUD Produtos funcionando</td>
-          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
-          <td class="pts">2,0</td>
+          <td>Front-end</td>
+          <td>Next.js 16.1.7 &nbsp;·&nbsp; React 19.2 &nbsp;·&nbsp; TypeScript 5</td>
+          <td>Framework full-stack com App Router, Server Components e Client Components</td>
         </tr>
         <tr>
-          <td>CRUD Usuários funcionando</td>
-          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
-          <td class="pts">2,0</td>
+          <td>Estilização</td>
+          <td>Tailwind CSS 4</td>
+          <td>Estilização utilitária responsiva e sistema de design indigo/violet</td>
         </tr>
         <tr>
-          <td>Integração frontend + backend</td>
-          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
-          <td class="pts">2,0</td>
+          <td>Back-end</td>
+          <td>Next.js Route Handlers &nbsp;·&nbsp; Node.js</td>
+          <td>API REST com endpoints organizados por recurso (products, users, auth)</td>
         </tr>
         <tr>
-          <td>Persistência em banco de dados</td>
-          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
-          <td class="pts">1,5</td>
+          <td>Autenticação</td>
+          <td>jose (JWT) &nbsp;·&nbsp; bcryptjs</td>
+          <td>Tokens JWT em cookies httpOnly com validade de 7 dias; hash seguro de senhas</td>
         </tr>
         <tr>
-          <td>Qualidade do código</td>
-          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
-          <td class="pts">1,0</td>
+          <td>Banco de dados</td>
+          <td>Neon (PostgreSQL) &nbsp;·&nbsp; @neondatabase/serverless</td>
+          <td>PostgreSQL serverless com driver optimizado para ambientes edge e Lambda</td>
         </tr>
         <tr>
-          <td>Histórico de commits</td>
-          <td style="text-align:center"><span class="status-ok">✔ 22 commits</span></td>
-          <td class="pts">0,5</td>
+          <td>Qualidade de código</td>
+          <td>ESLint 9 &nbsp;·&nbsp; TypeScript strict</td>
+          <td>Análise estática, linting e tipagem forte em todo o projeto</td>
         </tr>
         <tr>
-          <td>Deploy funcionando</td>
-          <td style="text-align:center"><span class="status-ok">✔ Vercel</span></td>
-          <td class="pts">1,0</td>
-        </tr>
-        <tr class="total-row">
-          <td>Total obrigatório</td>
-          <td></td>
-          <td>10,0</td>
+          <td>Versionamento</td>
+          <td>Git &nbsp;·&nbsp; GitHub</td>
+          <td>Controle de versão com 25 commits seguindo a convenção Conventional Commits</td>
         </tr>
         <tr>
-          <td>Bônus: autenticação + autorização + busca + paginação + upload</td>
-          <td style="text-align:center"><span class="status-ok">★ 5/5 itens</span></td>
-          <td class="pts">+2,0</td>
+          <td>Deploy</td>
+          <td>Vercel</td>
+          <td>Deploy automático via integração GitHub com CI/CD, CDN global e HTTPS</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+
+  <!-- ══════════ III. FUNCIONALIDADES ══════════ -->
+  <div class="section" id="funcionalidades">
+    <div class="section-heading">
+      <span class="section-num-badge">III</span>
+      <h2 class="section-title">Funcionalidades Implementadas</h2>
+    </div>
+
+    <p class="body-text">
+      O sistema consiste em um painel administrativo completo para gerenciamento de
+      produtos e usuários de um mini e-commerce. Todas as funcionalidades obrigatórias
+      foram implementadas, acompanhadas de recursos adicionais que ampliam a segurança
+      e a usabilidade da aplicação.
+    </p>
+
+    <div class="feature-cols">
+      <div>
+        <div class="feature-col-title">Funcionalidades Obrigatórias</div>
+        <ul class="feat-list">
+          <li><strong>CRUD de Produtos</strong> — criação, listagem, edição e exclusão</li>
+          <li><strong>CRUD de Usuários</strong> — criação, listagem, edição e exclusão</li>
+          <li><strong>API REST</strong> — Route Handlers do Next.js, padrão RESTful</li>
+          <li><strong>Banco de dados</strong> — PostgreSQL via Neon, serverless</li>
+          <li><strong>Versionamento Git</strong> — 25 commits com histórico estruturado</li>
+          <li><strong>Deploy em produção</strong> — Vercel com HTTPS e CDN global</li>
+        </ul>
+      </div>
+      <div>
+        <div class="feature-col-title">Funcionalidades Bônus</div>
+        <ul class="feat-list">
+          <li><strong>Autenticação JWT</strong> — login com cookie httpOnly (7 dias)</li>
+          <li><strong>Middleware de proteção</strong> — todas as rotas verificadas</li>
+          <li><strong>Autorização por perfil</strong> — admin (total) e usuário (leitura)</li>
+          <li><strong>Busca e filtros</strong> — nome, categoria e status no servidor</li>
+          <li><strong>Paginação server-side</strong> — 8 itens por página</li>
+          <li><strong>Upload de imagem</strong> — foto do produto em base64</li>
+          <li><strong>Dashboard</strong> — estatísticas dinâmicas em tempo real</li>
+          <li><strong>Seed automático</strong> — dados iniciais gerados no primeiro acesso</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ IV. ARQUITETURA ══════════ -->
+  <div class="section" id="arquitetura">
+    <div class="section-heading">
+      <span class="section-num-badge">IV</span>
+      <h2 class="section-title">Arquitetura e Rotas da API</h2>
+    </div>
+
+    <p class="body-text">
+      O projeto segue a estrutura de diretórios do <em>App Router</em> do Next.js,
+      onde as pastas dentro de <code class="mono">app/api/</code> definem automaticamente
+      as rotas da API REST, e as demais pastas correspondem às páginas da interface.
+    </p>
+
+    <div class="arch-pre" style="margin-bottom:28px">
+<span class="arch-comment">// Estrutura de pastas do projeto (simplificada)</span>
+
+mini_ecommerce_web2_iff/
+├── <span class="arch-dir">src/</span>
+│   ├── <span class="arch-dir">app/</span>
+│   │   ├── <span class="arch-green">api/</span>                          <span class="arch-comment">← Route Handlers (back-end)</span>
+│   │   │   ├── <span class="arch-green">auth/</span>
+│   │   │   │   ├── <span class="arch-file">login/route.ts</span>          <span class="arch-comment">← POST  autenticação</span>
+│   │   │   │   ├── <span class="arch-file">logout/route.ts</span>         <span class="arch-comment">← POST  encerrar sessão</span>
+│   │   │   │   └── <span class="arch-file">me/route.ts</span>             <span class="arch-comment">← GET   sessão ativa</span>
+│   │   │   ├── <span class="arch-green">products/</span>
+│   │   │   │   ├── <span class="arch-file">route.ts</span>                <span class="arch-comment">← GET / POST</span>
+│   │   │   │   └── <span class="arch-file">[id]/route.ts</span>           <span class="arch-comment">← GET / PUT / DELETE</span>
+│   │   │   └── <span class="arch-green">users/</span>
+│   │   │       ├── <span class="arch-file">route.ts</span>                <span class="arch-comment">← GET / POST  (admin)</span>
+│   │   │       └── <span class="arch-file">[id]/route.ts</span>           <span class="arch-comment">← GET / PUT / DELETE</span>
+│   │   ├── <span class="arch-yellow">login/page.tsx</span>                  <span class="arch-comment">← Tela de login</span>
+│   │   ├── <span class="arch-yellow">products/</span>                       <span class="arch-comment">← Listagem, detalhe, new, edit</span>
+│   │   ├── <span class="arch-yellow">users/</span>                          <span class="arch-comment">← Listagem, detalhe, new, edit</span>
+│   │   └── <span class="arch-yellow">page.tsx</span>                        <span class="arch-comment">← Dashboard principal</span>
+│   ├── <span class="arch-blue">components/</span>                         <span class="arch-comment">← Sidebar, Forms, Pagination…</span>
+│   ├── <span class="arch-blue">context/AuthContext.tsx</span>             <span class="arch-comment">← Gerenciamento de sessão</span>
+│   └── <span class="arch-blue">lib/</span>
+│       ├── <span class="arch-file">auth.ts</span>                         <span class="arch-comment">← JWT sign / verify</span>
+│       ├── <span class="arch-file">db.ts</span>                           <span class="arch-comment">← Conexão Neon + seed</span>
+│       └── <span class="arch-file">types.ts</span>                        <span class="arch-comment">← Interfaces TypeScript</span>
+└── <span class="arch-green">middleware.ts</span>                           <span class="arch-comment">← Proteção global de rotas</span>
+    </div>
+
+    <p style="font-family:-apple-system,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--metal-500);margin-bottom:12px;">
+      Endpoints da API REST
+    </p>
+    <table class="api-table">
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Endpoint</th>
+          <th>Descrição</th>
+          <th>Acesso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge post">POST</span></td>
+          <td><code class="mono">/api/auth/login</code></td>
+          <td>Autenticação — gera JWT em cookie httpOnly</td>
+          <td>Público</td>
+        </tr>
+        <tr>
+          <td><span class="badge post">POST</span></td>
+          <td><code class="mono">/api/auth/logout</code></td>
+          <td>Encerramento de sessão — remove o cookie</td>
+          <td>Autenticado</td>
+        </tr>
+        <tr>
+          <td><span class="badge get">GET</span></td>
+          <td><code class="mono">/api/auth/me</code></td>
+          <td>Retorna dados do usuário logado</td>
+          <td>Autenticado</td>
+        </tr>
+        <tr>
+          <td><span class="badge get">GET</span></td>
+          <td><code class="mono">/api/products</code></td>
+          <td>Lista produtos com busca, filtro e paginação</td>
+          <td>Autenticado</td>
+        </tr>
+        <tr>
+          <td><span class="badge post">POST</span></td>
+          <td><code class="mono">/api/products</code></td>
+          <td>Cria novo produto</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge get">GET</span></td>
+          <td><code class="mono">/api/products/[id]</code></td>
+          <td>Retorna produto por identificador</td>
+          <td>Autenticado</td>
+        </tr>
+        <tr>
+          <td><span class="badge put">PUT</span></td>
+          <td><code class="mono">/api/products/[id]</code></td>
+          <td>Atualiza dados do produto</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge delete">DEL</span></td>
+          <td><code class="mono">/api/products/[id]</code></td>
+          <td>Remove produto do sistema</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge get">GET</span></td>
+          <td><code class="mono">/api/users</code></td>
+          <td>Lista usuários com busca e paginação</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge post">POST</span></td>
+          <td><code class="mono">/api/users</code></td>
+          <td>Cria novo usuário com hash de senha</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge get">GET</span></td>
+          <td><code class="mono">/api/users/[id]</code></td>
+          <td>Retorna usuário por identificador</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge put">PUT</span></td>
+          <td><code class="mono">/api/users/[id]</code></td>
+          <td>Atualiza dados do usuário</td>
+          <td>Admin</td>
+        </tr>
+        <tr>
+          <td><span class="badge delete">DEL</span></td>
+          <td><code class="mono">/api/users/[id]</code></td>
+          <td>Remove usuário do sistema</td>
+          <td>Admin</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ══════════ V. COMMITS ══════════ -->
+  <div class="section" id="commits">
+    <div class="section-heading">
+      <span class="section-num-badge">V</span>
+      <h2 class="section-title">Histórico de Commits</h2>
+    </div>
+
+    <div class="commit-note">
+      O repositório possui <strong>25 commits</strong> que documentam a evolução natural
+      do desenvolvimento, seguindo a convenção <strong>Conventional Commits</strong>
+      (feat, fix, docs, chore, bonus). Os prints do histórico no GitHub são apresentados
+      na seção seguinte.
+    </div>
+
+    <!-- Configuração -->
+    <div class="commit-group">
+      <div class="commit-group-label">Configuração Inicial</div>
+      <div class="commit-row">
+        <span class="c-type chore">chore</span>
+        <span class="c-hash">446b258</span>
+        <span class="c-msg">first commit</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type setup">setup</span>
+        <span class="c-hash">37d43e2</span>
+        <span class="c-msg">setup: inicialização do projeto Next.js com TypeScript e Tailwind CSS</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+    </div>
+
+    <!-- Backend -->
+    <div class="commit-group">
+      <div class="commit-group-label">Back-end</div>
+      <div class="commit-row">
+        <span class="c-type backend">backend</span>
+        <span class="c-hash">e1b529c</span>
+        <span class="c-msg">backend: configuração do banco de dados SQLite com schema e seed</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type backend">backend</span>
+        <span class="c-hash">1e5328a</span>
+        <span class="c-msg">backend: implementação da API REST de Produtos (CRUD)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type backend">backend</span>
+        <span class="c-hash">7591bc3</span>
+        <span class="c-msg">backend: implementação da API REST de Usuários (CRUD)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+    </div>
+
+    <!-- Frontend -->
+    <div class="commit-group">
+      <div class="commit-group-label">Front-end</div>
+      <div class="commit-row">
+        <span class="c-type frontend">frontend</span>
+        <span class="c-hash">a7022e6</span>
+        <span class="c-msg">frontend: layout principal com sidebar e dashboard de estatísticas</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type frontend">frontend</span>
+        <span class="c-hash">4771915</span>
+        <span class="c-msg">frontend: interface de Produtos (listagem, cadastro e edição)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type frontend">frontend</span>
+        <span class="c-hash">37972da</span>
+        <span class="c-msg">frontend: interface de Usuários (listagem, cadastro e edição)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+    </div>
+
+    <!-- Bônus -->
+    <div class="commit-group">
+      <div class="commit-group-label">Funcionalidades Bônus</div>
+      <div class="commit-row">
+        <span class="c-type bonus">bonus</span>
+        <span class="c-hash">5fa9ed2</span>
+        <span class="c-msg">bonus: autenticação com login (JWT + cookie httpOnly)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type bonus">bonus</span>
+        <span class="c-hash">5c614d6</span>
+        <span class="c-msg">bonus: autorização por perfil (admin/user)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type bonus">bonus</span>
+        <span class="c-hash">0616972</span>
+        <span class="c-msg">bonus: busca, filtro e paginação server-side</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type bonus">bonus</span>
+        <span class="c-hash">38c8c6a</span>
+        <span class="c-msg">bonus: upload de imagem do produto (base64)</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+    </div>
+
+    <!-- Ajustes e deploy -->
+    <div class="commit-group">
+      <div class="commit-group-label">Ajustes, Melhorias e Deploy</div>
+      <div class="commit-row">
+        <span class="c-type fix">fix</span>
+        <span class="c-hash">551ca18</span>
+        <span class="c-msg">fix: rotas de API retornam 401 JSON quando não autenticado</span>
+        <span class="c-date">19 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type feat">feat</span>
+        <span class="c-hash">34238a3</span>
+        <span class="c-msg">feat: redesign UI/UX com branding Romão Store e páginas de detalhe</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type fix">fix</span>
+        <span class="c-hash">19ce525</span>
+        <span class="c-msg">fix: botões de ação com texto visível e aviso para não-admins</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type feat">feat</span>
+        <span class="c-hash">124044c</span>
+        <span class="c-msg">feat: favicon personalizado com sacola de compras em indigo</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type fix">fix</span>
+        <span class="c-hash">9c89c0c</span>
+        <span class="c-msg">fix: corrige estado de autenticação pós-login</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type feat">feat</span>
+        <span class="c-hash">ef5cbd6</span>
+        <span class="c-msg">feat: formatação automática de preço no padrão brasileiro (BRL)</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type feat">feat</span>
+        <span class="c-hash">b94c38e</span>
+        <span class="c-msg">feat: input de preço em centavos com formatação em tempo real</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type feat">feat</span>
+        <span class="c-hash">e4dfa0b</span>
+        <span class="c-msg">feat: migração do banco de dados de SQLite para Neon PostgreSQL</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type docs">docs</span>
+        <span class="c-hash">3c4ea68</span>
+        <span class="c-msg">docs: README em português com instruções de uso e arquitetura</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+      <div class="commit-row">
+        <span class="c-type fix">fix</span>
+        <span class="c-hash">41e315a</span>
+        <span class="c-msg">fix: downgrade Next.js 16.2.6 → 16.1.7 para compatibilidade com Vercel CLI</span>
+        <span class="c-date">22 mai. 2026</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ VI. EVIDÊNCIAS ══════════ -->
+  <div class="section" id="evidencias">
+    <div class="section-heading">
+      <span class="section-num-badge">VI</span>
+      <h2 class="section-title">Evidências — Capturas de Tela</h2>
+    </div>
+
+    <div class="img-grid">
+
+      <figure class="img-figure">
+        <img src="imagens/commits-github.png"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             alt="Histórico de commits no GitHub" />
+        <div class="img-placeholder" style="display:none">
+          <div class="picon">🖼</div>
+          Histórico de commits no GitHub
+        </div>
+        <figcaption>Fig. 1 — Histórico de commits no GitHub (19 de maio)</figcaption>
+      </figure>
+
+      <figure class="img-figure">
+        <img src="imagens/commits-detalhe.png"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+             alt="Detalhe dos commits" />
+        <div class="img-placeholder" style="display:none">
+          <div class="picon">🖼</div>
+          Detalhe das mensagens e datas
+        </div>
+        <figcaption>Fig. 2 — Histórico de commits no GitHub (22 de maio)</figcaption>
+      </figure>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════ VII. LINKS ══════════ -->
+  <div class="section" id="links">
+    <div class="section-heading">
+      <span class="section-num-badge">VII</span>
+      <h2 class="section-title">Links do Repositório e Deploy</h2>
+    </div>
+
+    <table class="link-table" style="margin-bottom:20px">
+      <thead>
+        <tr>
+          <th>Recurso</th>
+          <th>Endereço</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Repositório GitHub</td>
+          <td>
+            <a href="https://github.com/erickromao/mini_ecommerce_web2_iff" target="_blank">
+              https://github.com/erickromao/mini_ecommerce_web2_iff
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>Deploy — Vercel</td>
+          <td>
+            <a href="https://mini-ecommerce-web2-iff.vercel.app/" target="_blank">
+              https://mini-ecommerce-web2-iff.vercel.app/
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="credentials-box">
+      <strong>Credenciais de Teste (geradas automaticamente no primeiro acesso)</strong>
+      <div class="credential-row">
+        <code class="mono">admin@loja.com</code> &nbsp;/&nbsp; <code class="mono">senha123</code>
+        &nbsp;— perfil <strong>administrador</strong> (acesso total ao sistema)
+      </div>
+      <div class="credential-row">
+        <code class="mono">joao@email.com</code> &nbsp;/&nbsp; <code class="mono">senha123</code>
+        &nbsp;— perfil <strong>usuário</strong> (somente visualização de produtos)
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════ RODAPÉ / ASSINATURA ══════════ -->
+  <div class="doc-footer">
+    <div class="sign-block">
+      <div class="sign-line"></div>
+      <div class="sign-name">Erick Romão</div>
+      <div class="sign-role">Aluno — Web II</div>
+    </div>
+    <div class="footer-right">
+      Itaperuna — RJ<br>
+      22 de maio de 2026<br>
+      Instituto Federal Fluminense
+    </div>
   </div>
 
 </div>
