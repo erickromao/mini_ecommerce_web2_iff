@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { IconBox } from "@/components/Icons";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,8 +27,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   }
 
   return (
@@ -58,7 +55,7 @@ export default function LoginPage() {
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-800" />
-          <span className="text-xs text-slate-600">Romão Store © 2025</span>
+          <span className="text-xs text-slate-600">Romão Store © 2026</span>
           <div className="h-px flex-1 bg-slate-800" />
         </div>
       </div>
