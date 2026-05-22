@@ -18,21 +18,18 @@ const inputClass =
 
 const labelClass = "block text-sm font-medium text-slate-700 mb-1.5";
 
-function formatBRL(raw: string): string {
-  const cleaned = raw.replace(/\./g, "").replace(",", ".");
-  const num = parseFloat(cleaned);
-  if (isNaN(num)) return raw;
-  return num.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function parseBRL(display: string): number {
-  const cleaned = display.replace(/\./g, "").replace(",", ".");
-  return parseFloat(cleaned);
+function centsToDisplay(digits: string): string {
+  if (!digits) return "";
+  const cents = parseInt(digits, 10);
+  return (cents / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export default function ProductForm({ initial, id }: Props) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+  const initialDigits = initial?.price != null
+    ? String(Math.round(initial.price * 100))
+    : "";
   const [form, setForm] = useState({
     name: initial?.name ?? "",
     description: initial?.description ?? "",
@@ -42,9 +39,7 @@ export default function ProductForm({ initial, id }: Props) {
     active: initial?.active != null ? String(initial.active) : "1",
     image: initial?.image ?? "",
   });
-  const [priceDisplay, setPriceDisplay] = useState(
-    initial?.price != null ? formatBRL(String(initial.price)) : ""
-  );
+  const [priceDigits, setPriceDigits] = useState(initialDigits);
   const [imagePreview, setImagePreview] = useState<string>(initial?.image ?? "");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -56,18 +51,10 @@ export default function ProductForm({ initial, id }: Props) {
   }
 
   function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const raw = e.target.value;
-    setPriceDisplay(raw);
-    const num = parseBRL(raw);
-    setForm((f) => ({ ...f, price: isNaN(num) ? "" : String(num) }));
-  }
-
-  function handlePriceBlur() {
-    const num = parseBRL(priceDisplay);
-    if (!isNaN(num)) {
-      setPriceDisplay(formatBRL(String(num)));
-      setForm((f) => ({ ...f, price: String(num) }));
-    }
+    const digits = e.target.value.replace(/\D/g, "");
+    setPriceDigits(digits);
+    const value = digits ? parseInt(digits, 10) / 100 : 0;
+    setForm((f) => ({ ...f, price: String(value) }));
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -222,10 +209,9 @@ export default function ProductForm({ initial, id }: Props) {
             <input
               name="price"
               type="text"
-              inputMode="decimal"
-              value={priceDisplay}
+              inputMode="numeric"
+              value={centsToDisplay(priceDigits)}
               onChange={handlePriceChange}
-              onBlur={handlePriceBlur}
               required
               className={inputClass}
               placeholder="0,00"
