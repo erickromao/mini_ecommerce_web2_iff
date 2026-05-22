@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { fetchJson } from "@/lib/fetchJson";
+import { IconBox, IconUsers, IconPlus, IconArrowLeft } from "@/components/Icons";
 
 interface Stats {
   totalProducts: number;
@@ -39,67 +40,148 @@ export default function Dashboard() {
     if (user !== null) fetchStats();
   }, [user, isAdmin]);
 
-  const cards = [
-    { label: "Total de Produtos", value: stats?.totalProducts ?? "—", color: "bg-blue-500", icon: "📦", href: "/products" },
-    { label: "Produtos Ativos", value: stats?.activeProducts ?? "—", color: "bg-green-500", icon: "✅", href: "/products" },
-    ...(isAdmin ? [
-      { label: "Total de Usuários", value: stats?.totalUsers ?? "—", color: "bg-purple-500", icon: "👥", href: "/users" },
-      { label: "Usuários Ativos", value: stats?.activeUsers ?? "—", color: "bg-orange-500", icon: "🔑", href: "/users" },
-    ] : []),
+  const statCards = [
+    {
+      label: "Total de Produtos",
+      value: stats?.totalProducts ?? "—",
+      sub: "produtos cadastrados",
+      color: "bg-indigo-50 border-indigo-100",
+      iconBg: "bg-indigo-100",
+      iconColor: "text-indigo-600",
+      Icon: IconBox,
+      href: "/products",
+    },
+    {
+      label: "Produtos Ativos",
+      value: stats?.activeProducts ?? "—",
+      sub: "disponíveis no catálogo",
+      color: "bg-emerald-50 border-emerald-100",
+      iconBg: "bg-emerald-100",
+      iconColor: "text-emerald-600",
+      Icon: IconBox,
+      href: "/products?active=1",
+    },
+    ...(isAdmin
+      ? [
+          {
+            label: "Total de Usuários",
+            value: stats?.totalUsers ?? "—",
+            sub: "contas registradas",
+            color: "bg-violet-50 border-violet-100",
+            iconBg: "bg-violet-100",
+            iconColor: "text-violet-600",
+            Icon: IconUsers,
+            href: "/users",
+          },
+          {
+            label: "Usuários Ativos",
+            value: stats?.activeUsers ?? "—",
+            sub: "com acesso habilitado",
+            color: "bg-amber-50 border-amber-100",
+            iconBg: "bg-amber-100",
+            iconColor: "text-amber-600",
+            Icon: IconUsers,
+            href: "/users?active=1",
+          },
+        ]
+      : []),
   ];
 
   return (
     <div>
+      {/* Header */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Olá, {user?.name ?? "..."}!
+        <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+          Romão Store
+        </p>
+        <h2 className="text-2xl font-bold text-slate-900">
+          Olá, {user?.name?.split(" ")[0] ?? "..."}!
         </h2>
-        <p className="text-gray-500 text-sm mt-1">Visão geral do sistema</p>
+        <p className="text-slate-500 text-sm mt-1">Veja o resumo do seu painel administrativo</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {cards.map((card) => (
+      {/* Stats */}
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAdmin ? "lg:grid-cols-4" : "lg:grid-cols-2"} gap-4 mb-8`}>
+        {statCards.map((card) => (
           <Link key={card.label} href={card.href}>
-            <div className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer">
-              <div className={`${card.color} w-10 h-10 rounded-lg flex items-center justify-center text-xl mb-4`}>
-                {card.icon}
+            <div className={`border rounded-xl p-5 hover:shadow-md transition-all cursor-pointer group ${card.color}`}>
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${card.iconBg}`}>
+                  <card.Icon className={`w-5 h-5 ${card.iconColor}`} />
+                </div>
+                <span className="text-xs text-slate-400 group-hover:text-indigo-500 transition-colors">
+                  Ver →
+                </span>
               </div>
-              <p className="text-3xl font-bold text-gray-800">{card.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{card.label}</p>
+              <p className="text-3xl font-bold text-slate-900 tabular-nums">{card.value}</p>
+              <p className="text-sm font-medium text-slate-700 mt-0.5">{card.label}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{card.sub}</p>
             </div>
           </Link>
         ))}
       </div>
 
+      {/* Bottom grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="font-semibold text-gray-700 mb-4">Ações Rápidas</h3>
-          <div className="space-y-3">
+        {/* Quick actions */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <h3 className="font-semibold text-slate-800 mb-4">Ações Rápidas</h3>
+          <div className="space-y-2">
             {isAdmin && (
               <>
-                <Link href="/products/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
-                  <span className="text-blue-500 text-lg">+</span> Cadastrar novo produto
+                <Link
+                  href="/products/new"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all text-sm text-slate-600 hover:text-indigo-700 group"
+                >
+                  <span className="w-7 h-7 rounded-md bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                    <IconPlus className="w-3.5 h-3.5 text-indigo-600" />
+                  </span>
+                  Cadastrar novo produto
                 </Link>
-                <Link href="/users/new" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
-                  <span className="text-purple-500 text-lg">+</span> Cadastrar novo usuário
+                <Link
+                  href="/users/new"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-slate-200 hover:border-violet-300 hover:bg-violet-50/50 transition-all text-sm text-slate-600 hover:text-violet-700 group"
+                >
+                  <span className="w-7 h-7 rounded-md bg-violet-100 flex items-center justify-center group-hover:bg-violet-200 transition-colors">
+                    <IconPlus className="w-3.5 h-3.5 text-violet-600" />
+                  </span>
+                  Cadastrar novo usuário
                 </Link>
               </>
             )}
-            <Link href="/products" className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-gray-200 hover:bg-gray-50 transition-colors text-sm text-gray-600">
-              <span className="text-green-500 text-lg">→</span> Ver todos os produtos
+            <Link
+              href="/products"
+              className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50 transition-all text-sm text-slate-600 hover:text-emerald-700 group"
+            >
+              <span className="w-7 h-7 rounded-md bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
+                <IconArrowLeft className="w-3.5 h-3.5 text-emerald-600 rotate-180" />
+              </span>
+              Ver todos os produtos
             </Link>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="font-semibold text-gray-700 mb-4">Funcionalidades</h3>
-          <ul className="text-sm text-gray-500 space-y-2">
-            <li>✅ CRUD completo de Produtos e Usuários</li>
-            <li>✅ Autenticação com login (JWT + cookie)</li>
-            <li>✅ Autorização por perfil (admin / usuário)</li>
-            <li>✅ Busca e filtro em tempo real</li>
-            <li>✅ Paginação server-side</li>
-            <li>✅ Upload de imagem do produto (base64)</li>
+        {/* Features */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <h3 className="font-semibold text-slate-800 mb-4">Funcionalidades</h3>
+          <ul className="space-y-2.5">
+            {[
+              "CRUD completo de Produtos e Usuários",
+              "Autenticação com login (JWT + cookie httpOnly)",
+              "Autorização por perfil (admin / usuário)",
+              "Busca e filtro server-side",
+              "Paginação server-side",
+              "Upload de imagem do produto (base64)",
+            ].map((feat) => (
+              <li key={feat} className="flex items-start gap-2.5 text-sm text-slate-600">
+                <span className="mt-0.5 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 12 12" fill="none" className="w-2.5 h-2.5">
+                    <path d="M2 6l3 3 5-5" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                {feat}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

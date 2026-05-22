@@ -10,6 +10,11 @@ interface Props {
   id?: number;
 }
 
+const inputClass =
+  "w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all bg-white";
+
+const labelClass = "block text-sm font-medium text-slate-700 mb-1.5";
+
 export default function UserForm({ initial, id }: Props) {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -59,48 +64,60 @@ export default function UserForm({ initial, id }: Props) {
     }
 
     setSaving(false);
-
     router.push("/users");
     router.refresh();
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-8 max-w-2xl">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+        <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex items-start gap-2">
+          <span className="shrink-0 mt-0.5">⚠</span>
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-5">
+      {/* Personal info */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-slate-700 border-b border-slate-100 pb-3">
+          Informações Pessoais
+        </h3>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+          <label className={labelClass}>Nome completo *</label>
           <input
             name="name"
             value={form.name}
             onChange={change}
             required
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className={inputClass}
             placeholder="Nome completo"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+          <label className={labelClass}>Email *</label>
           <input
             name="email"
             type="email"
             value={form.email}
             onChange={change}
             required
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className={inputClass}
             placeholder="email@exemplo.com"
           />
         </div>
+      </div>
+
+      {/* Security */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-slate-700 border-b border-slate-100 pb-3">
+          Segurança
+        </h3>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Senha {isEdit ? "(deixe em branco para manter)" : "*"}
+          <label className={labelClass}>
+            Senha {isEdit ? <span className="text-slate-400 font-normal">(deixe em branco para manter atual)</span> : "*"}
           </label>
           <input
             name="password"
@@ -108,32 +125,29 @@ export default function UserForm({ initial, id }: Props) {
             value={form.password}
             onChange={change}
             required={!isEdit}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className={inputClass}
             placeholder={isEdit ? "Nova senha (opcional)" : "Senha"}
           />
         </div>
+      </div>
+
+      {/* Role & status */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h3 className="text-sm font-semibold text-slate-700 border-b border-slate-100 pb-3">
+          Permissões
+        </h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Perfil</label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={change}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 bg-white"
-            >
+            <label className={labelClass}>Perfil</label>
+            <select name="role" value={form.role} onChange={change} className={inputClass}>
               <option value="user">Usuário</option>
-              <option value="admin">Admin</option>
+              <option value="admin">Administrador</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select
-              name="active"
-              value={form.active}
-              onChange={change}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 bg-white"
-            >
+            <label className={labelClass}>Status</label>
+            <select name="active" value={form.active} onChange={change} className={inputClass}>
               <option value="1">Ativo</option>
               <option value="0">Inativo</option>
             </select>
@@ -141,18 +155,19 @@ export default function UserForm({ initial, id }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mt-8">
+      {/* Actions */}
+      <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="bg-purple-600 hover:bg-purple-700 disabled:opacity-60 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-sm"
         >
           {saving ? "Salvando..." : isEdit ? "Salvar Alterações" : "Cadastrar Usuário"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg text-sm border border-gray-200 hover:bg-gray-50 transition-colors"
+          className="border border-slate-200 hover:bg-slate-50 text-slate-600 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
         >
           Cancelar
         </button>
