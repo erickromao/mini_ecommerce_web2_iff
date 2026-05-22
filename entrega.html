@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrega — Mini E-commerce Web 2</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 13px;
+      color: #1e293b;
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 56px;
+    }
+
+    /* ── CAPA ── */
+    .cover {
+      text-align: center;
+      padding: 60px 0 48px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      display: inline-block;
+      background: #4F46E5;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .cover h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+
+    .cover h2 {
+      font-size: 15px;
+      font-weight: 500;
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+
+    .cover .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .cover .info-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .cover .info-item .label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 2px;
+    }
+
+    .cover .info-item .value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    /* ── SEÇÕES ── */
+    .section {
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #4F46E5;
+      border-bottom: 2px solid #e0e7ff;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+    }
+
+    /* ── TECNOLOGIAS ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tech-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+
+    .tech-card .tech-layer {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .tech-card .tech-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .tech-card .tech-detail {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    /* ── FUNCIONALIDADES ── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .feat-item .check {
+      color: #10b981;
+      font-size: 14px;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+
+    .feat-item .bonus-check {
+      color: #f59e0b;
+    }
+
+    .feat-item span {
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .bonus-label {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-left: 4px;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── COMMITS ── */
+    .commit-list {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .commit-item {
+      display: grid;
+      grid-template-columns: 72px 90px 1fr;
+      gap: 0;
+      border-bottom: 1px solid #f1f5f9;
+      align-items: center;
+    }
+
+    .commit-item:last-child { border-bottom: none; }
+
+    .commit-item:nth-child(even) { background: #f8fafc; }
+
+    .commit-hash {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #4F46E5;
+      padding: 8px 10px;
+      font-weight: 700;
+    }
+
+    .commit-date {
+      font-size: 10px;
+      color: #94a3b8;
+      padding: 8px 10px;
+    }
+
+    .commit-msg {
+      font-size: 11px;
+      color: #374151;
+      padding: 8px 10px 8px 0;
+    }
+
+    .commit-tag {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-right: 4px;
+      text-transform: uppercase;
+    }
+
+    .tag-feat    { background: #d1fae5; color: #065f46; }
+    .tag-backend { background: #dbeafe; color: #1e40af; }
+    .tag-frontend{ background: #ede9fe; color: #4c1d95; }
+    .tag-bonus   { background: #fef3c7; color: #92400e; }
+    .tag-fix     { background: #fee2e2; color: #991b1b; }
+    .tag-setup   { background: #f1f5f9; color: #475569; }
+    .tag-docs    { background: #e0f2fe; color: #0c4a6e; }
+    .tag-chore   { background: #f1f5f9; color: #475569; }
+    .tag-infra   { background: #e0f2fe; color: #075985; }
+
+    /* ── LINKS ── */
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .link-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .link-card .link-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .link-card a {
+      font-size: 12px;
+      color: #4F46E5;
+      word-break: break-all;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* ── CRITÉRIOS ── */
+    .criteria-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .criteria-table thead tr {
+      background: #4F46E5;
+      color: #fff;
+    }
+
+    .criteria-table th {
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .criteria-table th:last-child { text-align: center; }
+
+    .criteria-table td {
+      padding: 9px 14px;
+      font-size: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .criteria-table tr:last-child td { border-bottom: none; }
+    .criteria-table tr:nth-child(even) td { background: #f8fafc; }
+
+    .criteria-table td:last-child { text-align: center; }
+
+    .status-ok {
+      display: inline-block;
+      background: #d1fae5;
+      color: #065f46;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .pts {
+      font-weight: 700;
+      color: #4F46E5;
+    }
+
+    .total-row td {
+      background: #eef2ff !important;
+      font-weight: 700;
+      color: #312e81;
+      font-size: 13px;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { font-size: 12px; }
+      .page { padding: 32px 40px; }
+      a { color: #4F46E5 !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- CAPA -->
+  <div class="cover">
+    <div class="badge">Web 2 — IFF Itaperuna</div>
+    <h1>Mini E-commerce — Romão Store</h1>
+    <h2>Painel Administrativo Full Stack com Next.js e Neon Postgres</h2>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Aluno</div>
+        <div class="value">Erick Romão</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Turma</div>
+        <div class="value">5º Período — Sistemas de Informação</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Instituição</div>
+        <div class="value">IFF — Itaperuna</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Data</div>
+        <div class="value">22/05/2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECNOLOGIAS -->
+  <div class="section">
+    <div class="section-title">Tecnologias Utilizadas</div>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-layer">Frontend</div>
+        <div class="tech-name">Next.js 16 + React 19</div>
+        <div class="tech-detail">App Router · Tailwind CSS v4 · TypeScript</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Backend</div>
+        <div class="tech-name">Next.js API Routes</div>
+        <div class="tech-detail">Node.js · REST · bcryptjs · jose (JWT)</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Banco de Dados</div>
+        <div class="tech-name">Neon Postgres</div>
+        <div class="tech-detail">@neondatabase/serverless · serverless · schema e seed automáticos</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Deploy</div>
+        <div class="tech-name">Vercel + Neon</div>
+        <div class="tech-detail">CI/CD automático via GitHub · banco integrado ao painel Vercel</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNCIONALIDADES -->
+  <div class="section">
+    <div class="section-title">Funcionalidades Implementadas</div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <span class="check">✔</span>
+        <span>CRUD completo de Produtos</span>
+      </div>
+      <div class="feat-item">
+        <span class="check">✔</span>
+        <span>CRUD completo de Usuários</span>
+      </div>
+      <div class="feat-item">
+        <span class="check">✔</span>
+        <span>Integração frontend + backend (API REST)</span>
+      </div>
+      <div class="feat-item">
+        <span class="check">✔</span>
+        <span>Persistência em banco Neon Postgres (serverless)</span>
+      </div>
+      <div class="feat-item">
+        <span class="check bonus-check">★</span>
+        <span>Autenticação com login <span class="bonus-label">bônus</span></span>
+      </div>
+      <div class="feat-item">
+        <span class="check bonus-check">★</span>
+        <span>Autorização por perfil admin/user <span class="bonus-label">bônus</span></span>
+      </div>
+      <div class="feat-item">
+        <span class="check bonus-check">★</span>
+        <span>Busca e filtro server-side <span class="bonus-label">bônus</span></span>
+      </div>
+      <div class="feat-item">
+        <span class="check bonus-check">★</span>
+        <span>Paginação server-side <span class="bonus-label">bônus</span></span>
+      </div>
+      <div class="feat-item">
+        <span class="check bonus-check">★</span>
+        <span>Upload de imagem do produto (base64) <span class="bonus-label">bônus</span></span>
+      </div>
+      <div class="feat-item">
+        <span class="check">✔</span>
+        <span>Sessão via JWT em cookie httpOnly (7 dias)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="section">
+    <div class="section-title">Links do Projeto</div>
+    <div class="links-grid">
+      <div class="link-card">
+        <div class="link-label">Repositório GitHub</div>
+        <a href="https://github.com/erickromao/mini_ecommerce_web2_iff">
+          github.com/erickromao/mini_ecommerce_web2_iff
+        </a>
+      </div>
+      <div class="link-card">
+        <div class="link-label">Deploy — Vercel</div>
+        <a href="https://mini-ecommerce-web2-iff.vercel.app/">
+          mini-ecommerce-web2-iff.vercel.app
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMITS -->
+  <div class="section">
+    <div class="section-title">Histórico de Commits</div>
+    <div class="commit-list">
+
+      <div class="commit-item">
+        <div class="commit-hash">446b258</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-setup">setup</span>first commit</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">37d43e2</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-setup">setup</span>inicialização do projeto Next.js com TypeScript e Tailwind CSS</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">e1b529c</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>configuração do banco de dados SQLite com schema e seed</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">1e5328a</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>implementação da API REST de Produtos (CRUD)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">7591bc3</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-backend">backend</span>implementação da API REST de Usuários (CRUD)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">a7022e6</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>layout principal com sidebar e dashboard de estatísticas</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">4771915</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>interface de Produtos (listagem, cadastro e edição)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">37972da</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-frontend">frontend</span>interface de Usuários (listagem, cadastro e edição)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">5fa9ed2</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>autenticação com login (JWT + cookie httpOnly)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">5c614d6</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>autorização por perfil (admin/user)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">0616972</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>busca, filtro e paginação server-side</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">38c8c6a</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-bonus">bônus</span>upload de imagem do produto (base64)</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">551ca18</div>
+        <div class="commit-date">19/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>rotas de API retornam 401 JSON quando não autenticado</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">34238a3</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>redesign UI/UX com branding Romão Store e páginas de detalhe</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">19ce525</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>botões de ação com texto visível e aviso para não-admins</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">b1bbcbe</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-chore">chore</span>remove ícone de desenvolvimento do Next.js</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">3c4ea68</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-docs">docs</span>README em português com instruções de uso e arquitetura</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">124044c</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>favicon personalizado com sacola de compras em indigo</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">9c89c0c</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-fix">fix</span>corrige estado de autenticação pós-login</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">ef5cbd6</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>formatação automática de preço no padrão brasileiro</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">b94c38e</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-feat">feat</span>input de preço em centavos com formatação em tempo real</div>
+      </div>
+      <div class="commit-item">
+        <div class="commit-hash">e4dfa0b</div>
+        <div class="commit-date">22/05/2026</div>
+        <div class="commit-msg"><span class="commit-tag tag-infra">infra</span>migra banco de dados de SQLite para Neon Postgres</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CRITÉRIOS -->
+  <div class="section">
+    <div class="section-title">Critérios de Avaliação</div>
+    <table class="criteria-table">
+      <thead>
+        <tr>
+          <th>Critério</th>
+          <th style="text-align:center">Status</th>
+          <th style="text-align:center">Pontos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CRUD Produtos funcionando</td>
+          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
+          <td class="pts">2,0</td>
+        </tr>
+        <tr>
+          <td>CRUD Usuários funcionando</td>
+          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
+          <td class="pts">2,0</td>
+        </tr>
+        <tr>
+          <td>Integração frontend + backend</td>
+          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
+          <td class="pts">2,0</td>
+        </tr>
+        <tr>
+          <td>Persistência em banco de dados</td>
+          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
+          <td class="pts">1,5</td>
+        </tr>
+        <tr>
+          <td>Qualidade do código</td>
+          <td style="text-align:center"><span class="status-ok">✔ Completo</span></td>
+          <td class="pts">1,0</td>
+        </tr>
+        <tr>
+          <td>Histórico de commits</td>
+          <td style="text-align:center"><span class="status-ok">✔ 22 commits</span></td>
+          <td class="pts">0,5</td>
+        </tr>
+        <tr>
+          <td>Deploy funcionando</td>
+          <td style="text-align:center"><span class="status-ok">✔ Vercel</span></td>
+          <td class="pts">1,0</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total obrigatório</td>
+          <td></td>
+          <td>10,0</td>
+        </tr>
+        <tr>
+          <td>Bônus: autenticação + autorização + busca + paginação + upload</td>
+          <td style="text-align:center"><span class="status-ok">★ 5/5 itens</span></td>
+          <td class="pts">+2,0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
