@@ -18,18 +18,33 @@ const inputClass =
 
 const labelClass = "block text-sm font-medium text-slate-700 mb-1.5";
 
+function formatBRL(raw: string): string {
+  const cleaned = raw.replace(/\./g, "").replace(",", ".");
+  const num = parseFloat(cleaned);
+  if (isNaN(num)) return raw;
+  return num.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function parseBRL(display: string): number {
+  const cleaned = display.replace(/\./g, "").replace(",", ".");
+  return parseFloat(cleaned);
+}
+
 export default function ProductForm({ initial, id }: Props) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     name: initial?.name ?? "",
     description: initial?.description ?? "",
-    price: initial?.price?.toString() ?? "",
+    price: initial?.price != null ? String(initial.price) : "",
     stock: initial?.stock?.toString() ?? "0",
     category: initial?.category ?? "",
     active: initial?.active != null ? String(initial.active) : "1",
     image: initial?.image ?? "",
   });
+  const [priceDisplay, setPriceDisplay] = useState(
+    initial?.price != null ? formatBRL(String(initial.price)) : ""
+  );
   const [imagePreview, setImagePreview] = useState<string>(initial?.image ?? "");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -38,6 +53,21 @@ export default function ProductForm({ initial, id }: Props) {
 
   function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  }
+
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    setPriceDisplay(raw);
+    const num = parseBRL(raw);
+    setForm((f) => ({ ...f, price: isNaN(num) ? "" : String(num) }));
+  }
+
+  function handlePriceBlur() {
+    const num = parseBRL(priceDisplay);
+    if (!isNaN(num)) {
+      setPriceDisplay(formatBRL(String(num)));
+      setForm((f) => ({ ...f, price: String(num) }));
+    }
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -191,11 +221,11 @@ export default function ProductForm({ initial, id }: Props) {
             <label className={labelClass}>Preço (R$) *</label>
             <input
               name="price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={form.price}
-              onChange={change}
+              type="text"
+              inputMode="decimal"
+              value={priceDisplay}
+              onChange={handlePriceChange}
+              onBlur={handlePriceBlur}
               required
               className={inputClass}
               placeholder="0,00"
