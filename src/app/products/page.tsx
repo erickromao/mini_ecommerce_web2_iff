@@ -71,7 +71,7 @@ export default function ProductsPage() {
             {loading ? "Carregando..." : `${result?.total ?? 0} produto(s) encontrado(s)`}
           </p>
         </div>
-        {isAdmin && (
+        {isAdmin ? (
           <Link
             href="/products/new"
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
@@ -79,7 +79,11 @@ export default function ProductsPage() {
             <IconPlus className="w-4 h-4" />
             Novo Produto
           </Link>
-        )}
+        ) : user !== null ? (
+          <span className="text-xs text-slate-400 bg-slate-100 px-3 py-2 rounded-lg">
+            Somente administradores podem gerenciar produtos
+          </span>
+        ) : null}
       </div>
 
       {/* Filters */}
@@ -206,29 +210,29 @@ export default function ProductsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center justify-center gap-1">
+                        <div className="flex items-center justify-center gap-1.5">
                           <Link
                             href={`/products/${p.id}`}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
-                            title="Ver detalhes"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 transition-all"
                           >
                             <IconEye className="w-3.5 h-3.5" />
+                            Ver
                           </Link>
                           {isAdmin && (
                             <>
                               <Link
                                 href={`/products/${p.id}/edit`}
-                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
-                                title="Editar"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-all"
                               >
                                 <IconPencil className="w-3.5 h-3.5" />
+                                Editar
                               </Link>
                               <button
                                 onClick={() => handleDelete(p.id, p.name)}
-                                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all"
-                                title="Excluir"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
                               >
                                 <IconTrash className="w-3.5 h-3.5" />
+                                Excluir
                               </button>
                             </>
                           )}

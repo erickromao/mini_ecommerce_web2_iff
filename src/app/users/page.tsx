@@ -189,27 +189,27 @@ export default function UsersPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="flex items-center justify-center gap-1">
+                        <div className="flex items-center justify-center gap-1.5">
                           <Link
                             href={`/users/${u.id}`}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-all"
-                            title="Ver detalhes"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-violet-700 hover:bg-violet-50 border border-slate-200 hover:border-violet-200 transition-all"
                           >
                             <IconEye className="w-3.5 h-3.5" />
+                            Ver
                           </Link>
                           <Link
                             href={`/users/${u.id}/edit`}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"
-                            title="Editar"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-amber-700 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-all"
                           >
                             <IconPencil className="w-3.5 h-3.5" />
+                            Editar
                           </Link>
                           <button
                             onClick={() => handleDelete(u.id, u.name)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all"
-                            title="Excluir"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-red-700 hover:bg-red-50 border border-slate-200 hover:border-red-200 transition-all"
                           >
                             <IconTrash className="w-3.5 h-3.5" />
+                            Excluir
                           </button>
                         </div>
                       </td>
