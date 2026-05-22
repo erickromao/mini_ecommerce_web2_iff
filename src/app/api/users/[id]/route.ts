@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { sql, ensureDb } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
 type Params = { params: Promise<{ id: string }> };
 
-function requireAdmin(session: Awaited<ReturnType<typeof getSessionFromRequest>>) {
+async function requireAdmin(req: NextRequest) {
+  const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   if (session.role !== "admin") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
   return null;
@@ -13,15 +14,14 @@ function requireAdmin(session: Awaited<ReturnType<typeof getSessionFromRequest>>
 
 export async function GET(req: NextRequest, { params }: Params) {
   try {
-    const session = await getSessionFromRequest(req);
-    const denied = requireAdmin(session);
+    await ensureDb();
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     const { id } = await params;
-    const db = getDb();
-    const user = db
-      .prepare("SELECT id, name, email, role, active, created_at, updated_at FROM users WHERE id = ?")
-      .get(id);
+    const [user] = await sql`
+      SELECT id, name, email, role, active, created_at, updated_at FROM users WHERE id = ${id}
+    `;
     if (!user) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
     return NextResponse.json(user);
   } catch (err) {
@@ -32,8 +32,8 @@ export async function GET(req: NextRequest, { params }: Params) {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
-    const session = await getSessionFromRequest(req);
-    const denied = requireAdmin(session);
+    await ensureDb();
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     const { id } = await params;
@@ -44,25 +44,29 @@ export async function PUT(req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Nome e email são obrigatórios" }, { status: 400 });
     }
 
-    const db = getDb();
-    const existing = db.prepare("SELECT id FROM users WHERE id = ?").get(id);
+    const [existing] = await sql`SELECT id FROM users WHERE id = ${id}`;
     if (!existing) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
 
-    const conflict = db.prepare("SELECT id FROM users WHERE email = ? AND id != ?").get(email, id);
+    const [conflict] = await sql`SELECT id FROM users WHERE email = ${email} AND id != ${id}`;
     if (conflict) return NextResponse.json({ error: "Email já está em uso" }, { status: 409 });
 
+    let updated;
     if (password) {
       const hashed = await bcrypt.hash(password, 10);
-      db.prepare(`UPDATE users SET name=?,email=?,password=?,role=?,active=?,updated_at=datetime('now') WHERE id=?`)
-        .run(name, email, hashed, role ?? "user", Number(active ?? 1), id);
+      [updated] = await sql`
+        UPDATE users SET name=${name}, email=${email}, password=${hashed}, role=${role ?? "user"},
+          active=${Number(active ?? 1)}, updated_at=NOW()
+        WHERE id=${id}
+        RETURNING id, name, email, role, active, created_at, updated_at
+      `;
     } else {
-      db.prepare(`UPDATE users SET name=?,email=?,role=?,active=?,updated_at=datetime('now') WHERE id=?`)
-        .run(name, email, role ?? "user", Number(active ?? 1), id);
+      [updated] = await sql`
+        UPDATE users SET name=${name}, email=${email}, role=${role ?? "user"},
+          active=${Number(active ?? 1)}, updated_at=NOW()
+        WHERE id=${id}
+        RETURNING id, name, email, role, active, created_at, updated_at
+      `;
     }
-
-    const updated = db
-      .prepare("SELECT id, name, email, role, active, created_at, updated_at FROM users WHERE id = ?")
-      .get(id);
     return NextResponse.json(updated);
   } catch (err) {
     console.error(err);
@@ -72,16 +76,15 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
-    const session = await getSessionFromRequest(req);
-    const denied = requireAdmin(session);
+    await ensureDb();
+    const denied = await requireAdmin(req);
     if (denied) return denied;
 
     const { id } = await params;
-    const db = getDb();
-    const existing = db.prepare("SELECT id FROM users WHERE id = ?").get(id);
+    const [existing] = await sql`SELECT id FROM users WHERE id = ${id}`;
     if (!existing) return NextResponse.json({ error: "Usuário não encontrado" }, { status: 404 });
 
-    db.prepare("DELETE FROM users WHERE id = ?").run(id);
+    await sql`DELETE FROM users WHERE id = ${id}`;
     return NextResponse.json({ message: "Usuário excluído com sucesso" });
   } catch (err) {
     console.error(err);

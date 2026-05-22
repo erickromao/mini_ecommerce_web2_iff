@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { sql, ensureDb } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
 
 type Params = { params: Promise<{ id: string }> };
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
+    await ensureDb();
     const { id } = await params;
-    const db = getDb();
-    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    const [product] = await sql`SELECT * FROM products WHERE id = ${id}`;
     if (!product) return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     return NextResponse.json(product);
   } catch (err) {
@@ -19,6 +19,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
+    await ensureDb();
     const session = await getSessionFromRequest(req);
     if (!session) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     if (session.role !== "admin") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
@@ -31,17 +32,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Nome e preço são obrigatórios" }, { status: 400 });
     }
 
-    const db = getDb();
-    const existing = db.prepare("SELECT id FROM products WHERE id = ?").get(id);
+    const [existing] = await sql`SELECT id FROM products WHERE id = ${id}`;
     if (!existing) return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
 
-    db.prepare(`
-      UPDATE products SET name=?, description=?, price=?, stock=?, category=?, active=?, image=?,
-        updated_at=datetime('now')
-      WHERE id=?
-    `).run(name, description ?? "", Number(price), Number(stock ?? 0), category ?? "", Number(active ?? 1), image ?? "", id);
-
-    const updated = db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    const [updated] = await sql`
+      UPDATE products
+      SET name=${name}, description=${description ?? ""}, price=${Number(price)},
+          stock=${Number(stock ?? 0)}, category=${category ?? ""}, active=${Number(active ?? 1)},
+          image=${image ?? ""}, updated_at=NOW()
+      WHERE id=${id}
+      RETURNING *
+    `;
     return NextResponse.json(updated);
   } catch (err) {
     console.error(err);
@@ -51,16 +52,16 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
+    await ensureDb();
     const session = await getSessionFromRequest(req);
     if (!session) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     if (session.role !== "admin") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
     const { id } = await params;
-    const db = getDb();
-    const existing = db.prepare("SELECT id FROM products WHERE id = ?").get(id);
+    const [existing] = await sql`SELECT id FROM products WHERE id = ${id}`;
     if (!existing) return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
 
-    db.prepare("DELETE FROM products WHERE id = ?").run(id);
+    await sql`DELETE FROM products WHERE id = ${id}`;
     return NextResponse.json({ message: "Produto excluído com sucesso" });
   } catch (err) {
     console.error(err);

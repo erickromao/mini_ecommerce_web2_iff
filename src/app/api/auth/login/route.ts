@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { sql, ensureDb } from "@/lib/db";
 import { signToken, COOKIE_NAME, SessionUser } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDb();
     const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: "Email e senha obrigatórios" }, { status: 400 });
     }
 
-    const db = getDb();
-    const user = db
-      .prepare("SELECT id, name, email, password, role, active FROM users WHERE email = ?")
-      .get(email) as (SessionUser & { password: string; active: number }) | undefined;
+    const [user] = await sql`
+      SELECT id, name, email, password, role, active FROM users WHERE email = ${email}
+    ` as (SessionUser & { password: string; active: number })[];
 
     if (!user || !user.active) {
       return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
     return res;

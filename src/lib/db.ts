@@ -1,89 +1,68 @@
-import Database from "better-sqlite3";
-import path from "path";
-import fs from "fs";
+import { neon } from "@neondatabase/serverless";
 
-const DB_PATH =
-  process.env.NODE_ENV === "production"
-    ? "/tmp/database.db"
-    : path.join(process.cwd(), "database.db");
+export const sql = neon(process.env.DATABASE_URL!);
 
-let db: Database.Database | null = null;
+let initPromise: Promise<void> | null = null;
 
-export function getDb(): Database.Database {
-  if (db) return db;
-
-  const isNew = !fs.existsSync(DB_PATH);
-  db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
-
-  initSchema(db);
-
-  if (isNew) {
-    seedData(db);
-  }
-
-  return db;
-}
-
-function initSchema(db: Database.Database) {
-  db.exec(`
+async function init() {
+  await sql`
     CREATE TABLE IF NOT EXISTS products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
       description TEXT NOT NULL DEFAULT '',
-      price REAL NOT NULL,
+      price FLOAT8 NOT NULL,
       stock INTEGER NOT NULL DEFAULT 0,
       category TEXT NOT NULL DEFAULT '',
       active INTEGER NOT NULL DEFAULT 1,
       image TEXT NOT NULL DEFAULT '',
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `;
 
+  await sql`
     CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       password TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'user',
       active INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    );
-  `);
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    )
+  `;
 
-  // Safe migration: add image column if it doesn't exist yet
-  const cols = (db.pragma("table_info(products)") as { name: string }[]).map((c) => c.name);
-  if (!cols.includes("image")) {
-    db.exec("ALTER TABLE products ADD COLUMN image TEXT NOT NULL DEFAULT ''");
+  const [{ n }] = await sql`SELECT COUNT(*)::int AS n FROM users`;
+  if ((n as number) === 0) {
+    const hash = "$2b$10$.Ed82tIUCYmED3cI4TGaKO2r5jLyRIPw8UZgZ5m/hJn1LUMEsSsHK";
+    await sql`
+      INSERT INTO products (name, description, price, stock, category, active) VALUES
+        ('Notebook Dell Inspiron', 'Notebook 15" Intel i7, 16GB RAM, SSD 512GB', 4299.99, 15, 'Eletrônicos', 1),
+        ('Mouse Logitech MX Master', 'Mouse sem fio ergonômico para profissionais', 349.90, 42, 'Periféricos', 1),
+        ('Teclado Mecânico Keychron', 'Teclado mecânico TKL com switches Brown', 599.00, 28, 'Periféricos', 1),
+        ('Monitor 27" LG UltraWide', 'Monitor 27" IPS 4K 144Hz HDR400', 2199.00, 8, 'Monitores', 1),
+        ('Cadeira Gamer ThunderX3', 'Cadeira ergonômica com suporte lombar ajustável', 1450.00, 5, 'Mobiliário', 0)
+    `;
+    await sql`
+      INSERT INTO users (name, email, password, role, active) VALUES
+        ('Admin', 'admin@loja.com', ${hash}, 'admin', 1),
+        ('João Silva', 'joao@email.com', ${hash}, 'user', 1),
+        ('Maria Santos', 'maria@email.com', ${hash}, 'user', 1)
+    `;
   }
 }
 
-function seedData(db: Database.Database) {
-  const insertProduct = db.prepare(`
-    INSERT INTO products (name, description, price, stock, category, active)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `);
+export function ensureDb(): Promise<void> {
+  if (!initPromise) initPromise = init();
+  return initPromise;
+}
 
-  const products = [
-    ["Notebook Dell Inspiron", "Notebook 15\" Intel i7, 16GB RAM, SSD 512GB", 4299.99, 15, "Eletrônicos", 1],
-    ["Mouse Logitech MX Master", "Mouse sem fio ergonômico para profissionais", 349.90, 42, "Periféricos", 1],
-    ["Teclado Mecânico Keychron", "Teclado mecânico TKL com switches Brown", 599.00, 28, "Periféricos", 1],
-    ["Monitor 27\" LG UltraWide", "Monitor 27\" IPS 4K 144Hz HDR400", 2199.00, 8, "Monitores", 1],
-    ["Cadeira Gamer ThunderX3", "Cadeira ergonômica com suporte lombar ajustável", 1450.00, 5, "Mobiliário", 0],
-  ];
-
-  for (const p of products) {
-    insertProduct.run(...p);
-  }
-
-  const hash = "$2b$10$.Ed82tIUCYmED3cI4TGaKO2r5jLyRIPw8UZgZ5m/hJn1LUMEsSsHK"; // "senha123"
-  const insertUser = db.prepare(`
-    INSERT INTO users (name, email, password, role, active)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-  insertUser.run("Admin", "admin@loja.com", hash, "admin", 1);
-  insertUser.run("João Silva", "joao@email.com", hash, "user", 1);
-  insertUser.run("Maria Santos", "maria@email.com", hash, "user", 1);
+// Helper for dynamic queries (WHERE clauses built at runtime)
+export async function rawSql<T = Record<string, unknown>>(
+  queryString: string,
+  params: (string | number)[] = []
+): Promise<T[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (sql as any).query(queryString, params);
 }
